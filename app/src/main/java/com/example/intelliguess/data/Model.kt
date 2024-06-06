@@ -6,4 +6,4 @@ data class SubjCollection(
     var mapPair: MutableMap<String, String>,
     var isEditing: Boolean = false
 )
-// git hello
+// git hell
