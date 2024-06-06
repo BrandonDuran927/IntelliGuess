@@ -152,8 +152,8 @@ fun IntelliGuessCollection(
                 onDismissRequest = { expand.value = false },
                 modifier = Modifier.width(250.dp)
             ) {
-                if (viewModel.collections.value?.isNotEmpty() == true) {
-                    viewModel.collections.value?.forEach { subj ->
+                if (collections.isNotEmpty()) {
+                    collections.forEach { subj ->
                         DropdownMenuItem(
                             text = {
                                 Row(
@@ -171,7 +171,7 @@ fun IntelliGuessCollection(
                                             if (viewModel.collections.value?.size == 1) {
                                                 expand.value = false
                                             }
-                                            viewModel.removeSubject(subj)
+                                            //TODO: viewModel.removeSubject(subj)
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
@@ -184,9 +184,9 @@ fun IntelliGuessCollection(
                             },
                             onClick = {
                                 // Find the SubjCollection with the matching subject
-                                val foundSubj =
-                                    viewModel.collections.value?.find { it.subject == subj.subject }!!
-                                viewModel.setSelectedSubj(foundSubj)
+//                                val foundSubj =
+//                                    viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                // TODO: viewModel.setSelectedSubj(foundSubj)
                                 expand.value = false // Dismiss the DropdownMenu
                             }
                         )
@@ -203,29 +203,29 @@ fun IntelliGuessCollection(
                     .padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
             ) {
                 items(collections) { obj ->
-                    if (selectedSubj?.subject == obj.subject) {
-                        IntelliGuessItem(
-                            obj = obj,
-                            onDelete = { key ->
-                                viewModel.modifyMap(obj, key)
-                            },
-                            onEdit = { key, value ->
-                                obj.isEditing = true
-                                isEditing.value = true
-                                currTitle.value = key
-                                editedDesc.value = value
-                                viewModel.startEditing(obj)
-                            }
-                        )
-                    }
+//                    if (selectedSubj?.subject == obj.subject) {
+//                        IntelliGuessItem(
+//                            obj = obj,
+//                            onDelete = { key ->
+//                                viewModel.modifyMap(obj, key)
+//                            },
+//                            onEdit = { key, value ->
+//                                obj.isEditing = true
+//                                isEditing.value = true
+//                                currTitle.value = key
+//                                editedDesc.value = value
+//                                viewModel.startEditing(obj)
+//                            }
+//                        )
+//                    }
                     if (selectedSubj?.isEditing == obj.isEditing) {
-                        IntelliGuessEditItem(
-                            obj = obj,
-                            isEditing = isEditing,
-                            editedDesc = editedDesc,
-                            currTitle = currTitle,
-                            viewModel = viewModel
-                        )
+//                        IntelliGuessEditItem(
+//                            obj = obj,
+//                            isEditing = isEditing,
+//                            editedDesc = editedDesc,
+//                            currTitle = currTitle,
+//                            viewModel = viewModel
+//                        )
                     }
                 }
             }
@@ -265,15 +265,15 @@ fun IntelliGuessCollection(
 
     }
     ShowDialogSubj(showDialogSubj = showDialogSubj, addedSubj = addedSubj, viewModel = viewModel)
-    selectedSubj?.let {
-        ShowDialogItem(
-        showDialogItem = showDialogItem,
-        title = title,
-        description = description,
-        viewModel = viewModel,
-        selectedSubj = it
-    )
-    }
+//    selectedSubj?.let {
+//        ShowDialogItem(
+//        showDialogItem = showDialogItem,
+//        title = title,
+//        description = description,
+//        viewModel = viewModel,
+//        selectedSubj = it
+//    )
+//    } TODO
 }
 
 

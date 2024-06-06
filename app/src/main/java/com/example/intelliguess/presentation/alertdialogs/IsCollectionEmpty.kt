@@ -18,12 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.intelliguess.R
+import com.example.intelliguess.SubjCollectionEnt
 import com.example.intelliguess.data.SubjCollection
 import com.example.intelliguess.navigation.Screen
 
 @Composable
 fun IsCollectionEmpty(
-    collections: List<SubjCollection>,
+    collections: List<SubjCollectionEnt>,
     navController: NavController
 ) {
     if (collections.isEmpty()) {

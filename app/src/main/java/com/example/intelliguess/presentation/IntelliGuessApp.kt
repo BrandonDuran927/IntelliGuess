@@ -81,7 +81,7 @@ fun IntelliGuessApp(
     val userWin = remember { mutableStateOf(false) }
 
     val input = remember { mutableStateOf("") }
-    val increment = remember { viewModel.getItemRandomly()?.let { mutableIntStateOf(it) } }
+    //val increment = remember { viewModel.getItemRandomly()?.let { mutableIntStateOf(it) } }
     val count = remember { mutableIntStateOf(0) }
     val winStreak = remember { mutableIntStateOf(0) }
 
@@ -89,14 +89,14 @@ fun IntelliGuessApp(
     val selectedSubj by viewModel.selectedSubj.observeAsState()
 
     val oldMap = remember { mutableStateOf(selectedSubj?.copy())  }
-    val entry = selectedSubj?.let {
-        increment?.let { it1 ->
-            viewModel.getItemRandomly(
-                it1.intValue,
-                it
-            )
-        }
-    }
+//    val entry = selectedSubj?.let {
+//        increment?.let { it1 ->
+//            viewModel.getItemRandomly(
+//                it1.intValue,
+//                it
+//            )
+//        }
+//    }
     val loc = LocalContext.current
 
     Column(
@@ -147,7 +147,7 @@ fun IntelliGuessApp(
                                 },
                                 onClick = {
                                     val foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
-                                    viewModel.setSelectedSubj(foundSubj)
+                                    //viewModel.setSelectedSubj(foundSubj)
                                     oldMap.value = foundSubj
                                     expand.value = false
                                 }
@@ -157,7 +157,7 @@ fun IntelliGuessApp(
                     Spacer(modifier = Modifier.width(10.dp))
                     TextButton(onClick = {
                         navController.navigate(route = Screen.Item.route)
-                        viewModel.resetMap(oldMap.value!!)
+                        //viewModel.resetMap(oldMap.value!!)
                     }) {
                         Text(text = "Collections", color = Color.White, fontSize = 18.sp)
                         Icon(
@@ -181,14 +181,14 @@ fun IntelliGuessApp(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (selectedSubj?.mapPair?.isNotEmpty() == true && viewModel.collections.value?.isNotEmpty() == true) {
-                Text(
-                    text = entry?.value.toString(),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White,
-                    lineHeight = 36.sp,
-                    textAlign = TextAlign.Center
-                )
+//                Text(
+//                    text = entry?.value.toString(),
+//                    fontSize = 32.sp,
+//                    fontWeight = FontWeight.ExtraBold,
+//                    color = Color.White,
+//                    lineHeight = 36.sp,
+//                    textAlign = TextAlign.Center
+//                )
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -216,111 +216,111 @@ fun IntelliGuessApp(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row {
-            if (entry != null) {
-                TextButton(
-                    onClick = {
-                        hint.value = true
-                    }
-                ) {
-                    Text(
-                        text = "Hint",
-                        color = colorResource(id = R.color.Secondary),
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                TextButton(
-                    onClick = {
-                        if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
-                            isOnePair.value = true
-                        } else {
-                            increment?.intValue = (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
-                        }
-                    }
-                ) {
-                    Text(
-                        text = "Skip",
-                        color = colorResource(id = R.color.Secondary),
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(
-                    onClick = {
-                        if (input.value.lowercase() == entry.key.lowercase()) {
-                            count.intValue += 1
-                            viewModel.modifyMap(
-                                selectedSubj!!,
-                                entry.key,
-                                winStreak,
-                                oldMap.value!!
-                            )
-                            if (count.intValue == oldMap.value?.mapPair?.size) {
-                                userWin.value = true
-                                viewModel.resetMap(oldMap.value!!)
-                                count.intValue = 0
-                                increment?.intValue = viewModel.getItemRandomly() ?: 0
-                                winStreak.intValue = 0
-                            } else {
-                                if (increment?.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
-                                        1
-                                    ) || viewModel.selectedSubj.value?.mapPair?.size == 1
-                                ) {
-                                    increment?.intValue = 0
-                                } else {
-                                    increment?.intValue =
-                                        (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
-                                }
-                            }
-                        } else {
-                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier.width(100.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.Secondary)
-                    )
-                ) {
-                    Text(text = "Submit", fontSize = 16.sp)
-                }
-
-
-            } else {
-                Spacer(modifier = Modifier.height(48.dp))
-            }
+//            if (entry != null) {
+//                TextButton(
+//                    onClick = {
+//                        hint.value = true
+//                    }
+//                ) {
+//                    Text(
+//                        text = "Hint",
+//                        color = colorResource(id = R.color.Secondary),
+//                        fontSize = 16.sp
+//                    )
+//                }
+//                Spacer(modifier = Modifier.width(10.dp))
+//                TextButton(
+//                    onClick = {
+//                        if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
+//                            isOnePair.value = true
+//                        } else {
+//                            increment?.intValue = (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
+//                        }
+//                    }
+//                ) {
+//                    Text(
+//                        text = "Skip",
+//                        color = colorResource(id = R.color.Secondary),
+//                        fontSize = 16.sp
+//                    )
+//                }
+//                Spacer(modifier = Modifier.width(10.dp))
+//                Button(
+//                    onClick = {
+//                        if (input.value.lowercase() == entry.key.lowercase()) {
+//                            count.intValue += 1
+//                            viewModel.modifyMap(
+//                                selectedSubj!!,
+//                                entry.key,
+//                                winStreak,
+//                                oldMap.value!!
+//                            )
+//                            if (count.intValue == oldMap.value?.mapPair?.size) {
+//                                userWin.value = true
+//                                viewModel.resetMap(oldMap.value!!)
+//                                count.intValue = 0
+//                                increment?.intValue = viewModel.getItemRandomly() ?: 0
+//                                winStreak.intValue = 0
+//                            } else {
+//                                if (increment?.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
+//                                        1
+//                                    ) || viewModel.selectedSubj.value?.mapPair?.size == 1
+//                                ) {
+//                                    increment?.intValue = 0
+//                                } else {
+//                                    increment?.intValue =
+//                                        (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
+//                                }
+//                            }
+//                        } else {
+//                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
+//                        }
+//                    },
+//                    modifier = Modifier.width(100.dp),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = colorResource(id = R.color.Secondary)
+//                    )
+//                ) {
+//                    Text(text = "Submit", fontSize = 16.sp)
+//                }
+//
+//
+//            } else {
+//                Spacer(modifier = Modifier.height(48.dp))
+//            }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        if (entry != null) {
-            TextField(
-                value = input.value,
-                onValueChange = { input.value = it },
-                placeholder = {
-                    Text(
-                        text = "Type here...",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                    )
-                },
-                maxLines = 1,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.White
-                ),
-                textStyle = TextStyle(
-                    fontSize = 24.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                ),
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "Win streak: ${winStreak.intValue}",
-                fontStyle = FontStyle.Italic,
-                color = Color.White
-            )
-        }
+//        if (entry != null) {
+//            TextField(
+//                value = input.value,
+//                onValueChange = { input.value = it },
+//                placeholder = {
+//                    Text(
+//                        text = "Type here...",
+//                        color = Color.White,
+//                        fontSize = 16.sp,
+//                    )
+//                },
+//                maxLines = 1,
+//                colors = TextFieldDefaults.colors(
+//                    focusedContainerColor = Color.Transparent,
+//                    unfocusedContainerColor = Color.Transparent,
+//                    unfocusedIndicatorColor = Color.White
+//                ),
+//                textStyle = TextStyle(
+//                    fontSize = 24.sp,
+//                    color = Color.White,
+//                    textAlign = TextAlign.Center
+//                ),
+//                singleLine = true
+//            )
+//            Spacer(modifier = Modifier.height(10.dp))
+//            Text(
+//                text = "Win streak: ${winStreak.intValue}",
+//                fontStyle = FontStyle.Italic,
+//                color = Color.White
+//            )
+//        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -341,7 +341,7 @@ fun IntelliGuessApp(
         }
     }
     IsCollectionEmpty(collections = collections, navController = navController)
-    UserHint(hint = hint, entry = entry)
+    //UserHint(hint = hint, entry = entry)
     IsOneDict(winStreak = winStreak, isOnePair = isOnePair, navController = navController)
     UserWin(userWin = userWin)
 }

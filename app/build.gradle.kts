@@ -81,4 +81,7 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // Add Room KTX for coroutine support
     implementation("androidx.room:room-ktx:$room_version")
+
+    // Add Gson to use TypeConverter properly
+    implementation ("com.google.code.gson:gson:2.10.1")
 }

@@ -49,13 +49,24 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
+import com.example.intelliguess.IntelliGuessViewModelFactory
+import com.example.intelliguess.SubjCollectionDatabase
 import com.example.intelliguess.presentation.IntelliGuessCollection
 import com.example.intelliguess.ui.theme.IntelliGuessTheme
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<IntelliGuessViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get the DAO instance
+        val dao = SubjCollectionDatabase.getDatabase(application).dao
+
+        // Create the ViewModelFactory
+        val factory = IntelliGuessViewModelFactory(dao)
+
+        // Use the ViewModelFactory to get the ViewModel
+        val viewModel: IntelliGuessViewModel by viewModels { factory }
+
         setContent {
             IntelliGuessTheme {
                 // A surface container using the 'background' color from the theme
@@ -63,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController: NavHostController = rememberNavController()
+                    val navController = rememberNavController()
                     SetupNavGraph(
                         navController = navController,
                         viewModel

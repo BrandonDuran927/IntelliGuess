@@ -75,7 +75,7 @@ fun IntelliGuessEditItem(
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
                         onClick = {
-                            viewModel.editSubjDesc(obj, currTitle.value, editedDesc.value)
+                            //viewModel.editSubjDesc(obj, currTitle.value, editedDesc.value)
                             isEditing.value = false
                             obj.isEditing = false
                         },

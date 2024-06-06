@@ -53,7 +53,7 @@ fun ShowDialogItem(
                 Button(onClick = {
                     if (title.value.isNotBlank() && description.value.isNotBlank()) {
                         selectedSubj?.let { subj ->
-                            viewModel.addMap(subj, title.value.uppercase().trim(), description.value.trim())
+                            //viewModel.addMap(subj, title.value.uppercase().trim(), description.value.trim())
                         }
                         title.value = ""
                         description.value = ""
