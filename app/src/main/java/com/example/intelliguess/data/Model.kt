@@ -6,4 +6,4 @@ data class SubjCollection(
     var mapPair: MutableMap<String, String>,
     var isEditing: Boolean = false
 )
-// Oh hell no
+// Oh hell n
