@@ -23,7 +23,9 @@ class IntelliGuessViewModel(
             _collections.value = dao.getAllSubjCollections()
 
             // Ensuring the UI reflects the latest state
-            _selectedSubj.value = _collections.value?.first()
+            if(_collections.value!!.isNotEmpty()) {
+                _selectedSubj.value = _collections.value?.first()
+            }
         }
     }
 
@@ -42,8 +44,11 @@ class IntelliGuessViewModel(
             dao.deleteSubjCollection(subj)
             _collections.value =
                 dao.getAllSubjCollections() // Update the collections after deletion
-            _selectedSubj.value = _collections.value?.last()
+            if (_collections.value!!.isNotEmpty()) {
+                _selectedSubj.value = _collections.value?.last()
+            }
         }
+
     }
 
     fun setCurrentSubject(subj: SubjCollectionEnt) {
