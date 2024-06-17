@@ -1,11 +1,9 @@
 package com.example.intelliguess
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.intelliguess.data.SubjCollection
 import kotlinx.coroutines.launch
 
 class IntelliGuessViewModel(
@@ -31,22 +29,32 @@ class IntelliGuessViewModel(
             val newCard = SubjCollectionEnt(addedSubj, newPair)
             dao.upsertSubjCollection(newCard)
             _collections.value = dao.getAllSubjCollections() // Fetch updated data
+            _selectedSubj.value = _collections.value?.last()
         }
-//        val currentList = _collections.value ?: emptyList()
-//        _collections.value = currentList.plus(newCard)
-//        _selectedSubj.value = newCard
-        //Do not use list, instead add it directly in db?..
+    }
+    fun remove(subj: SubjCollectionEnt) {
+        viewModelScope.launch {
+            dao.deleteSubjCollection(subj)
+            _collections.value = dao.getAllSubjCollections() // Update the collections after deletion
+        }
+    }
+    fun retrieveCurrentSubj(): SubjCollectionEnt? {
+         if (_selectedSubj.value == null) {
+             return if (_collections.value != null) {
+                 _collections.value?.first()
+             } else {
+                 null
+             }
+         }
+        return _selectedSubj.value
+        // Add ternary operator to retrieve the first element
     }
 
-//    fun removeSubject(subj: SubjCollection) {
-//        _collections.value = _collections.value?.toMutableList()?.apply {
-//            remove(subj)
-//        }
-//    }
+    fun setCurrentSubject(subj: SubjCollectionEnt) {
+        _selectedSubj.value = subj
+    }
 //
-//    fun setSelectedSubj(subj: SubjCollection) {
-//        _selectedSubj.value = subj
-//    }
+
 //
 //    fun addMap(obj: SubjCollection, description: String, title: String) {
 //        val currentSubj = _collections.value?.find { it.subject == obj.subject }

@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -51,7 +52,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
 import com.example.intelliguess.navigation.Screen
-import com.example.intelliguess.presentation.alertdialogs.ShowDialogItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogSubj
 
 
@@ -78,12 +78,14 @@ fun IntelliGuessCollection(
     val collections by viewModel.collections.observeAsState(initial = emptyList())
     val selectedSubj by viewModel.selectedSubj.observeAsState()
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "${collections.size}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",
@@ -102,8 +104,8 @@ fun IntelliGuessCollection(
                         containerColor = colorResource(id = R.color.Secondary)
                     )
                 ) {
-                    if (viewModel.collections.value?.isNotEmpty() == true) {
-                        selectedSubj?.subject?.let {
+                    if (viewModel.collections.value?.size != 0) {
+                        viewModel.retrieveCurrentSubj()?.subject?.let {
                             Text(
                                 text = it,
                                 fontSize = 16.sp,
@@ -171,7 +173,7 @@ fun IntelliGuessCollection(
                                             if (viewModel.collections.value?.size == 1) {
                                                 expand.value = false
                                             }
-                                            //TODO: viewModel.removeSubject(subj)
+                                            viewModel.remove(subj) //TODO: Not updating after the deletion completed
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
@@ -184,9 +186,9 @@ fun IntelliGuessCollection(
                             },
                             onClick = {
                                 // Find the SubjCollection with the matching subject
-//                                val foundSubj =
-//                                    viewModel.collections.value?.find { it.subject == subj.subject }!!
-                                // TODO: viewModel.setSelectedSubj(foundSubj)
+                                val foundSubj =
+                                    viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                viewModel.setCurrentSubject(foundSubj)
                                 expand.value = false // Dismiss the DropdownMenu
                             }
                         )
@@ -208,7 +210,7 @@ fun IntelliGuessCollection(
 //                            obj = obj,
 //                            onDelete = { key ->
 //                                viewModel.modifyMap(obj, key)
-//                            },
+//                            }
 //                            onEdit = { key, value ->
 //                                obj.isEditing = true
 //                                isEditing.value = true
@@ -275,6 +277,8 @@ fun IntelliGuessCollection(
 //    )
 //    } TODO
 }
+
+
 
 
 @Preview(showBackground = true)
