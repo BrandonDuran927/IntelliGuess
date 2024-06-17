@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.SubjCollectionEnt
-import com.example.intelliguess.data.SubjCollection
 
 @Composable
 fun ShowDialogItem(
@@ -54,7 +53,7 @@ fun ShowDialogItem(
                 Button(onClick = {
                     if (title.value.isNotBlank() && description.value.isNotBlank()) {
                         selectedSubj.let { subj ->
-                            viewModel.addMap(subj, title.value.uppercase().trim(), description.value.trim())
+                            viewModel.modifyMap(subj, title.value.uppercase().trim(), description.value.trim())
                         }
                         title.value = ""
                         description.value = ""

@@ -50,14 +50,14 @@ class IntelliGuessViewModel(
         _selectedSubj.value = subj
     }
 
-    fun addMap(subj: SubjCollectionEnt, description: String, title: String) {
+    fun modifyMap(subj: SubjCollectionEnt, description: String, title: String) {
         viewModelScope.launch {
             val currentCollections = _collections.value?.toMutableList() ?: mutableListOf()
 
             val currentSubj = _collections.value?.find { it.subject == subj.subject }
             currentSubj.let {
                 val updatedMapPair = currentSubj?.mapPair?.toMutableMap()?.apply {
-                    put(description, title)
+                    put(description.trim(), title.trim())
                 }
                 val updatedSubj = updatedMapPair?.let { currentSubj.copy(mapPair = it) }
 
@@ -78,19 +78,31 @@ class IntelliGuessViewModel(
             }
         }
     }
-//
-//    fun modifyMap(obj: SubjCollection, key: String) {
-//        val updatedMap = obj.mapPair.toMutableMap().apply {
-//            remove(key)
-//        }
-//        val updatedObj = obj.copy(mapPair = updatedMap)
-//        _collections.value = _collections.value?.toMutableList()?.apply {
-//            val indexToUpdate = indexOfFirst { it.subject == obj.subject }
-//            this[indexToUpdate] = updatedObj
-//        }
-//        _selectedSubj.value = updatedObj
-//    }
-//
+    fun deleteFromMap(subj: SubjCollectionEnt, key: String) {
+        viewModelScope.launch {
+            val updatedMap = subj.mapPair.toMutableMap().apply {
+                remove(key)
+            }
+            val updatedObj = subj.copy(mapPair = updatedMap)
+            dao.upsertSubjCollection(updatedObj)
+            _collections.value = dao.getAllSubjCollections()
+            _selectedSubj.value = updatedObj
+        }
+    }
+    fun startEditing(subj: SubjCollectionEnt) {
+        _collections.value?.let { list ->
+            val updatedCollections = list.map { obj ->
+                if (obj == subj) {
+                    obj.copy(isEditing = true)
+                } else {
+                    obj.copy(isEditing = false)
+                }
+            }
+            _collections.value = updatedCollections
+        }
+    }
+
+
 //    fun modifyMap(obj: SubjCollection, key: String, wins: MutableState<Int>, oldSubj: SubjCollection) {
 //        val updatedMap = obj.mapPair.toMutableMap().apply {
 //            remove(key)
@@ -139,34 +151,5 @@ class IntelliGuessViewModel(
 //        _selectedSubj.value = oldObj
 //    }
 //
-//    fun startEditing(subj: SubjCollection) {
-//        collections.value?.let { list ->
-//            val updatedCollections = list.map { collection ->
-//                if (collection == subj) {
-//                    collection.copy(isEditing = true)
-//                } else {
-//                    collection.copy(isEditing = false)
-//                }
-//            }
-//            _collections.value = updatedCollections
-//        }
-//    }
 //
-//    fun editSubjDesc(subj: SubjCollection, editedDesc: String, currentTitle: String) {
-//        val currentSubj = _collections.value?.find { it.subject == subj.subject }
-//        val editedMapPair = currentSubj?.mapPair?.toMutableMap()?.apply {
-//            put(editedDesc.trim(), currentTitle.trim())
-//        }
-//        val updatedSubj = editedMapPair?.let { currentSubj.copy(mapPair = it) }
-//        val updatedList = _collections.value?.toMutableList()?.apply {
-//            val indexToUpdate = indexOfFirst { it.subject == currentSubj?.subject }
-//            if (indexToUpdate != -1) {
-//                if (updatedSubj != null) {
-//                    this[indexToUpdate] = updatedSubj
-//                }
-//            }
-//        }
-//        _collections.value = updatedList!!
-//        _selectedSubj.value = updatedSubj!!
-//    }
 }

@@ -21,12 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.IntelliGuessViewModel
-import com.example.intelliguess.data.SubjCollection
 import com.example.intelliguess.R
+import com.example.intelliguess.SubjCollectionEnt
 
 @Composable
 fun IntelliGuessEditItem(
-    obj: SubjCollection,
+    obj: SubjCollectionEnt,
     isEditing: MutableState<Boolean>,
     editedDesc: MutableState<String>,
     currTitle: MutableState<String>,
@@ -75,7 +75,7 @@ fun IntelliGuessEditItem(
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
                         onClick = {
-                            //viewModel.editSubjDesc(obj, currTitle.value, editedDesc.value)
+                            viewModel.modifyMap(obj, currTitle.value, editedDesc.value)
                             isEditing.value = false
                             obj.isEditing = false
                         },

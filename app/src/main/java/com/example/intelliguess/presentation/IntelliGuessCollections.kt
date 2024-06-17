@@ -210,35 +210,26 @@ fun IntelliGuessCollection(
                     if (selectedSubj?.subject == obj.subject) {
                         IntelliGuessItem(
                             obj,
-                            onDelete = { _ ->
-
+                            onDelete = { key ->
+                                viewModel.deleteFromMap(obj, key)
                             },
-                            onEdit = { _, _ ->
-
+                            onEdit = { key, value ->
+                                obj.isEditing = true
+                                isEditing.value = true
+                                currTitle.value = key
+                                editedDesc.value = value
+                                viewModel.startEditing(obj)
                             }
                         )
-//                        IntelliGuessItem(
-//                            obj = obj,
-//                            onDelete = { key ->
-//                                viewModel.modifyMap(obj, key)
-//                            }
-//                            onEdit = { key, value ->
-//                                obj.isEditing = true
-//                                isEditing.value = true
-//                                currTitle.value = key
-//                                editedDesc.value = value
-//                                viewModel.startEditing(obj)
-//                            }
-//                        )
                     }
                     if (selectedSubj?.isEditing == obj.isEditing) {
-//                        IntelliGuessEditItem(
-//                            obj = obj,
-//                            isEditing = isEditing,
-//                            editedDesc = editedDesc,
-//                            currTitle = currTitle,
-//                            viewModel = viewModel
-//                        )
+                        IntelliGuessEditItem(
+                            obj = obj,
+                            isEditing = isEditing,
+                            editedDesc = editedDesc,
+                            currTitle = currTitle,
+                            viewModel = viewModel
+                        )
                     }
                 }
             }
