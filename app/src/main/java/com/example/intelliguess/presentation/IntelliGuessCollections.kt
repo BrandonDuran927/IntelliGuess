@@ -1,5 +1,6 @@
 package com.example.intelliguess.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
 import com.example.intelliguess.navigation.Screen
+import com.example.intelliguess.presentation.alertdialogs.ShowDialogItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogSubj
 
 
@@ -73,7 +75,7 @@ fun IntelliGuessCollection(
     val editedDesc = remember { mutableStateOf("") }
     val currTitle = remember { mutableStateOf("") }
 
-    //val loc = LocalContext.current
+    val loc = LocalContext.current
 
     val collections by viewModel.collections.observeAsState(initial = emptyList())
     val selectedSubj by viewModel.selectedSubj.observeAsState()
@@ -105,7 +107,7 @@ fun IntelliGuessCollection(
                     )
                 ) {
                     if (viewModel.collections.value?.size != 0) {
-                        viewModel.retrieveCurrentSubj()?.subject?.let {
+                        selectedSubj?.subject?.let {
                             Text(
                                 text = it,
                                 fontSize = 16.sp,
@@ -173,7 +175,7 @@ fun IntelliGuessCollection(
                                             if (viewModel.collections.value?.size == 1) {
                                                 expand.value = false
                                             }
-                                            viewModel.remove(subj) //TODO: Not updating after the deletion completed
+                                            viewModel.remove(subj)
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
@@ -205,7 +207,16 @@ fun IntelliGuessCollection(
                     .padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
             ) {
                 items(collections) { obj ->
-//                    if (selectedSubj?.subject == obj.subject) {
+                    if (selectedSubj?.subject == obj.subject) {
+                        IntelliGuessItem(
+                            obj,
+                            onDelete = { _ ->
+
+                            },
+                            onEdit = { _, _ ->
+
+                            }
+                        )
 //                        IntelliGuessItem(
 //                            obj = obj,
 //                            onDelete = { key ->
@@ -219,7 +230,7 @@ fun IntelliGuessCollection(
 //                                viewModel.startEditing(obj)
 //                            }
 //                        )
-//                    }
+                    }
                     if (selectedSubj?.isEditing == obj.isEditing) {
 //                        IntelliGuessEditItem(
 //                            obj = obj,
@@ -236,6 +247,7 @@ fun IntelliGuessCollection(
                 FloatingActionButton(
                     onClick = {
                         showDialogItem.value = true
+                        Toast.makeText(loc, "${selectedSubj?.subject}", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
                         .padding(40.dp)
@@ -267,6 +279,15 @@ fun IntelliGuessCollection(
 
     }
     ShowDialogSubj(showDialogSubj = showDialogSubj, addedSubj = addedSubj, viewModel = viewModel)
+    selectedSubj?.let {
+        ShowDialogItem(
+            showDialogItem = showDialogItem,
+            title = title,
+            description = description,
+            viewModel = viewModel,
+            selectedSubj = it
+        )
+    }
 //    selectedSubj?.let {
 //        ShowDialogItem(
 //        showDialogItem = showDialogItem,
@@ -275,10 +296,8 @@ fun IntelliGuessCollection(
 //        viewModel = viewModel,
 //        selectedSubj = it
 //    )
-//    } TODO
+//    }
 }
-
-
 
 
 @Preview(showBackground = true)

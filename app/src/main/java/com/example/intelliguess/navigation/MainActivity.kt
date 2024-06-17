@@ -65,7 +65,9 @@ class MainActivity : ComponentActivity() {
         val factory = IntelliGuessViewModelFactory(dao)
 
         // Use the ViewModelFactory to get the ViewModel
-        val viewModel: IntelliGuessViewModel by viewModels { factory }
+        val viewModel: IntelliGuessViewModel by viewModels {
+            factory
+        }
 
         setContent {
             IntelliGuessTheme {

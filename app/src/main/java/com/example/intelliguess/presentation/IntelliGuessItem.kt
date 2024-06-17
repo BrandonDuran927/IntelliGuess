@@ -17,49 +17,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.intelliguess.SubjCollectionEnt
 import com.example.intelliguess.data.SubjCollection
 
-//@Composable
-//fun IntelliGuessItem(
-//    obj: SubjCollectionEnt,
-//    onDelete: (String) -> Unit,
-//    onEdit: (String, String) -> Unit
-//) {
-//    obj.mapPair.forEach { (key, value) ->
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp),
-//            horizontalArrangement = Arrangement.SpaceEvenly
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .padding(end = 8.dp)
-//                    .width(200.dp)
-//            ) {
-//                Text(
-//                    text = key,
-//                    fontSize = 24.sp,
-//                    fontWeight = FontWeight.ExtraBold
-//                )
-//                Text(text = value)
-//            }
-//            IconButton(
-//                onClick = { onEdit(key, value) }
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Rounded.Edit,
-//                    contentDescription = "Edit Subject",
-//                )
-//            }
-//            IconButton(
-//                onClick = { onDelete(key) }
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Rounded.Delete,
-//                    contentDescription = "Delete Subject",
-//                )
-//            }
-//        }
-//    }
-//}
+@Composable
+fun IntelliGuessItem(
+    obj: SubjCollectionEnt,
+    onDelete: (String) -> Unit,
+    onEdit: (String, String) -> Unit
+) {
+    obj.mapPair.forEach { (key, value) ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .width(200.dp)
+            ) {
+                Text(
+                    text = key,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(text = value)
+            }
+            IconButton(
+                onClick = { onEdit(key, value) }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Edit,
+                    contentDescription = "Edit Subject",
+                )
+            }
+            IconButton(
+                onClick = { onDelete(key) }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "Delete Subject",
+                )
+            }
+        }
+    }
+}

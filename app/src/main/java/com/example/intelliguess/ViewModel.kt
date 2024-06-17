@@ -19,7 +19,11 @@ class IntelliGuessViewModel(
 
     init {
         viewModelScope.launch {
+            // Ensures the LiveData _collections contains the latest data
             _collections.value = dao.getAllSubjCollections()
+
+            // Ensuring the UI reflects the latest state
+            _selectedSubj.value = _collections.value?.first()
         }
     }
 
@@ -32,47 +36,48 @@ class IntelliGuessViewModel(
             _selectedSubj.value = _collections.value?.last()
         }
     }
+
     fun remove(subj: SubjCollectionEnt) {
         viewModelScope.launch {
             dao.deleteSubjCollection(subj)
-            _collections.value = dao.getAllSubjCollections() // Update the collections after deletion
+            _collections.value =
+                dao.getAllSubjCollections() // Update the collections after deletion
+            _selectedSubj.value = _collections.value?.last()
         }
-    }
-    fun retrieveCurrentSubj(): SubjCollectionEnt? {
-         if (_selectedSubj.value == null) {
-             return if (_collections.value != null) {
-                 _collections.value?.first()
-             } else {
-                 null
-             }
-         }
-        return _selectedSubj.value
-        // Add ternary operator to retrieve the first element
     }
 
     fun setCurrentSubject(subj: SubjCollectionEnt) {
         _selectedSubj.value = subj
     }
-//
 
-//
-//    fun addMap(obj: SubjCollection, description: String, title: String) {
-//        val currentSubj = _collections.value?.find { it.subject == obj.subject }
-//        val updatedMapPair = currentSubj?.mapPair?.toMutableMap()?.apply {
-//            put(description, title) //This
-//        }
-//        val updatedSubj = updatedMapPair?.let { currentSubj.copy(mapPair = it) }
-//        val updatedList = _collections.value?.toMutableList()?.apply {
-//            val indexToUpdate = indexOfFirst { it.subject == currentSubj?.subject }
-//            if (indexToUpdate != -1) {
-//                if (updatedSubj != null) {
-//                    this[indexToUpdate] = updatedSubj
-//                }
-//            }
-//        } ?: emptyList()
-//        _collections.value = updatedList
-//        _selectedSubj.value = updatedSubj!!
-//    }
+    fun addMap(subj: SubjCollectionEnt, description: String, title: String) {
+        viewModelScope.launch {
+            val currentCollections = _collections.value?.toMutableList() ?: mutableListOf()
+
+            val currentSubj = _collections.value?.find { it.subject == subj.subject }
+            currentSubj.let {
+                val updatedMapPair = currentSubj?.mapPair?.toMutableMap()?.apply {
+                    put(description, title)
+                }
+                val updatedSubj = updatedMapPair?.let { currentSubj.copy(mapPair = it) }
+
+                // Update the local list
+                val index = currentCollections.indexOf(subj)
+                if (index != -1 && updatedSubj != null) {
+                    currentCollections[index] = updatedSubj
+                }
+
+                // Update the database
+                if (updatedSubj != null) {
+                    dao.upsertSubjCollection(updatedSubj)
+                }
+
+                // Update the LiveData
+                _collections.value = dao.getAllSubjCollections()
+                _selectedSubj.value = updatedSubj!!
+            }
+        }
+    }
 //
 //    fun modifyMap(obj: SubjCollection, key: String) {
 //        val updatedMap = obj.mapPair.toMutableMap().apply {

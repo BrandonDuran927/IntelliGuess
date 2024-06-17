@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.IntelliGuessViewModel
+import com.example.intelliguess.SubjCollectionEnt
 import com.example.intelliguess.data.SubjCollection
 
 @Composable
@@ -22,7 +23,7 @@ fun ShowDialogItem(
     title: MutableState<String>,
     description: MutableState<String>,
     viewModel: IntelliGuessViewModel,
-    selectedSubj: SubjCollection
+    selectedSubj: SubjCollectionEnt
 
 ) {
     if (showDialogItem.value) {
@@ -52,8 +53,8 @@ fun ShowDialogItem(
             confirmButton = {
                 Button(onClick = {
                     if (title.value.isNotBlank() && description.value.isNotBlank()) {
-                        selectedSubj?.let { subj ->
-                            //viewModel.addMap(subj, title.value.uppercase().trim(), description.value.trim())
+                        selectedSubj.let { subj ->
+                            viewModel.addMap(subj, title.value.uppercase().trim(), description.value.trim())
                         }
                         title.value = ""
                         description.value = ""
