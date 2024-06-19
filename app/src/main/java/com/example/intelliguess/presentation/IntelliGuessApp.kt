@@ -3,8 +3,6 @@ package com.example.intelliguess.presentation
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,44 +16,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
+import com.example.intelliguess.SubjCollectionEnt
 import com.example.intelliguess.navigation.Screen
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
 import com.example.intelliguess.presentation.alertdialogs.IsOneDict
@@ -81,22 +72,28 @@ fun IntelliGuessApp(
     val userWin = remember { mutableStateOf(false) }
 
     val input = remember { mutableStateOf("") }
-    //val increment = remember { viewModel.getItemRandomly()?.let { mutableIntStateOf(it) } }
     val count = remember { mutableIntStateOf(0) }
     val winStreak = remember { mutableIntStateOf(0) }
 
     val collections by viewModel.collections.observeAsState(initial = emptyList())
     val selectedSubj by viewModel.selectedSubj.observeAsState()
+    var oldSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
 
-    val oldMap = remember { mutableStateOf(selectedSubj?.copy())  }
-//    val entry = selectedSubj?.let {
-//        increment?.let { it1 ->
-//            viewModel.getItemRandomly(
-//                it1.intValue,
-//                it
-//            )
-//        }
-//    }
+    LaunchedEffect(selectedSubj) {
+        if (selectedSubj != null && oldSubj == null) {
+            oldSubj = selectedSubj?.copy()
+        }
+    }
+
+    val increment = remember { mutableIntStateOf(viewModel.getItemRandomly() ?: 0) }
+    val entry = selectedSubj?.let {
+        increment.let { it1 ->
+            viewModel.getItemRandomly(
+                it1.intValue - 1,
+                it
+            )
+        }
+    }
     val loc = LocalContext.current
 
     Column(
@@ -147,8 +144,8 @@ fun IntelliGuessApp(
                                 },
                                 onClick = {
                                     val foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
-                                    //viewModel.setSelectedSubj(foundSubj)
-                                    oldMap.value = foundSubj
+                                    viewModel.setCurrentSubject(foundSubj)
+                                    oldSubj = foundSubj
                                     expand.value = false
                                 }
                             )
@@ -157,7 +154,9 @@ fun IntelliGuessApp(
                     Spacer(modifier = Modifier.width(10.dp))
                     TextButton(onClick = {
                         navController.navigate(route = Screen.Item.route)
-                        //viewModel.resetMap(oldMap.value!!)
+                        if (oldSubj != null) {
+                            viewModel.resetMap(oldSubj!!)
+                        }
                     }) {
                         Text(text = "Collections", color = Color.White, fontSize = 18.sp)
                         Icon(
@@ -181,14 +180,14 @@ fun IntelliGuessApp(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (selectedSubj?.mapPair?.isNotEmpty() == true && viewModel.collections.value?.isNotEmpty() == true) {
-//                Text(
-//                    text = entry?.value.toString(),
-//                    fontSize = 32.sp,
-//                    fontWeight = FontWeight.ExtraBold,
-//                    color = Color.White,
-//                    lineHeight = 36.sp,
-//                    textAlign = TextAlign.Center
-//                )
+                Text(
+                    text = entry?.value.toString(),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    lineHeight = 36.sp,
+                    textAlign = TextAlign.Center
+                )
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -216,111 +215,110 @@ fun IntelliGuessApp(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row {
-//            if (entry != null) {
-//                TextButton(
-//                    onClick = {
-//                        hint.value = true
-//                    }
-//                ) {
-//                    Text(
-//                        text = "Hint",
-//                        color = colorResource(id = R.color.Secondary),
-//                        fontSize = 16.sp
-//                    )
-//                }
-//                Spacer(modifier = Modifier.width(10.dp))
-//                TextButton(
-//                    onClick = {
-//                        if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
-//                            isOnePair.value = true
-//                        } else {
-//                            increment?.intValue = (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
-//                        }
-//                    }
-//                ) {
-//                    Text(
-//                        text = "Skip",
-//                        color = colorResource(id = R.color.Secondary),
-//                        fontSize = 16.sp
-//                    )
-//                }
-//                Spacer(modifier = Modifier.width(10.dp))
-//                Button(
-//                    onClick = {
-//                        if (input.value.lowercase() == entry.key.lowercase()) {
-//                            count.intValue += 1
-//                            viewModel.modifyMap(
-//                                selectedSubj!!,
-//                                entry.key,
-//                                winStreak,
-//                                oldMap.value!!
-//                            )
-//                            if (count.intValue == oldMap.value?.mapPair?.size) {
-//                                userWin.value = true
-//                                viewModel.resetMap(oldMap.value!!)
-//                                count.intValue = 0
-//                                increment?.intValue = viewModel.getItemRandomly() ?: 0
-//                                winStreak.intValue = 0
-//                            } else {
-//                                if (increment?.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
-//                                        1
-//                                    ) || viewModel.selectedSubj.value?.mapPair?.size == 1
-//                                ) {
-//                                    increment?.intValue = 0
-//                                } else {
-//                                    increment?.intValue =
-//                                        (increment?.intValue?.plus(1) ?: 0) % oldMap.value?.mapPair?.size!!
-//                                }
-//                            }
-//                        } else {
-//                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
-//                        }
-//                    },
-//                    modifier = Modifier.width(100.dp),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = colorResource(id = R.color.Secondary)
-//                    )
-//                ) {
-//                    Text(text = "Submit", fontSize = 16.sp)
-//                }
-//
-//
-//            } else {
-//                Spacer(modifier = Modifier.height(48.dp))
-//            }
+            if (entry != null) {
+                TextButton(
+                    onClick = {
+                        hint.value = true
+                    }
+                ) {
+                    Text(
+                        text = "Hint",
+                        color = colorResource(id = R.color.Secondary),
+                        fontSize = 16.sp
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                TextButton(
+                    onClick = {
+                        if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
+                            isOnePair.value = true
+                        } else {
+                            increment.intValue = (increment.intValue.plus(1) ?: 0) % oldSubj?.mapPair?.size!!
+                        }
+                    }
+                ) {
+                    Text(
+                        text = "Skip",
+                        color = colorResource(id = R.color.Secondary),
+                        fontSize = 16.sp
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(
+                    onClick = {
+                        if (input.value.lowercase() == entry.key.lowercase()) {
+                            count.intValue += 1
+                            winStreak.intValue += 1
+                            viewModel.modifyMap(
+                                selectedSubj!!,
+                                entry.key,
+                                oldSubj!!
+                            )
+                            if (count.intValue == oldSubj?.mapPair?.size) { // User wins
+                                userWin.value = true
+                                viewModel.resetMap(oldSubj!!)
+                                count.intValue = 0
+                                increment.intValue = viewModel.getItemRandomly() ?: 0
+                                winStreak.intValue = 0
+                            } else {
+                                if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
+                                        1
+                                    ) || viewModel.selectedSubj.value?.mapPair?.size == 1
+                                ) {
+                                    increment.intValue = 0
+                                } else {
+                                    increment.intValue =
+                                        (increment.intValue.plus(1) ?: 0) % oldSubj?.mapPair?.size!!
+                                }
+                            }
+                            Toast.makeText(loc, "${selectedSubj?.mapPair?.size}", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.width(100.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.Secondary)
+                    )
+                ) {
+                    Text(text = "Submit", fontSize = 16.sp)
+                }
+            } else {
+                Spacer(modifier = Modifier.height(48.dp))
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
-//        if (entry != null) {
-//            TextField(
-//                value = input.value,
-//                onValueChange = { input.value = it },
-//                placeholder = {
-//                    Text(
-//                        text = "Type here...",
-//                        color = Color.White,
-//                        fontSize = 16.sp,
-//                    )
-//                },
-//                maxLines = 1,
-//                colors = TextFieldDefaults.colors(
-//                    focusedContainerColor = Color.Transparent,
-//                    unfocusedContainerColor = Color.Transparent,
-//                    unfocusedIndicatorColor = Color.White
-//                ),
-//                textStyle = TextStyle(
-//                    fontSize = 24.sp,
-//                    color = Color.White,
-//                    textAlign = TextAlign.Center
-//                ),
-//                singleLine = true
-//            )
-//            Spacer(modifier = Modifier.height(10.dp))
-//            Text(
-//                text = "Win streak: ${winStreak.intValue}",
-//                fontStyle = FontStyle.Italic,
-//                color = Color.White
-//            )
-//        }
+        if (entry != null) {
+            TextField(
+                value = input.value,
+                onValueChange = { input.value = it },
+                placeholder = {
+                    Text(
+                        text = "Type here...",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                    )
+                },
+                maxLines = 1,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.White
+                ),
+                textStyle = TextStyle(
+                    fontSize = 24.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                ),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Win streak: ${winStreak.intValue}",
+                fontStyle = FontStyle.Italic,
+                color = Color.White
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -340,9 +338,11 @@ fun IntelliGuessApp(
             }
         }
     }
-    IsCollectionEmpty(collections = collections, navController = navController)
-    //UserHint(hint = hint, entry = entry)
+    if (viewModel.collections.value?.isEmpty() == true) {
+        IsCollectionEmpty(collections = collections, navController = navController)
+    }
     IsOneDict(winStreak = winStreak, isOnePair = isOnePair, navController = navController)
+    UserHint(hint = hint, entry = entry)
     UserWin(userWin = userWin)
 }
 

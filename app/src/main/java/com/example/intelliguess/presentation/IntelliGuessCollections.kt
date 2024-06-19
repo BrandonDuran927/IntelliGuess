@@ -57,7 +57,6 @@ import com.example.intelliguess.presentation.alertdialogs.ShowDialogItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogSubj
 
 
-//data class SubjCollection(var subject: String, var mapPair: MutableMap<String, String>, var isEditing: Boolean = false)
 
 @Composable
 fun IntelliGuessCollection(
@@ -87,7 +86,6 @@ fun IntelliGuessCollection(
             .background(colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "${collections.size}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",
@@ -106,7 +104,7 @@ fun IntelliGuessCollection(
                         containerColor = colorResource(id = R.color.Secondary)
                     )
                 ) {
-                    if (viewModel.collections.value?.size != 0) {
+                    if (viewModel.collections.value?.isNotEmpty() == true) {
                         selectedSubj?.subject?.let {
                             Text(
                                 text = it,
