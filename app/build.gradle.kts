@@ -84,4 +84,7 @@ dependencies {
 
     // Add Gson to use TypeConverter properly
     implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation ("androidx.datastore:datastore:1.0.0")
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
 class IntelliGuessViewModel(
@@ -129,15 +130,17 @@ class IntelliGuessViewModel(
         }
     }
     fun startEditing(subj: SubjCollectionEnt) {
-        _collections.value?.let { list ->
-            val updatedCollections = list.map { obj ->
-                if (obj == subj) {
-                    obj.copy(isEditing = true)
-                } else {
-                    obj.copy(isEditing = false)
+        viewModelScope.launch {
+            _collections.value?.let { list ->
+                val updatedCollections = list.map { obj ->
+                    if (obj == subj) {
+                        obj.copy(isEditing = true)
+                    } else {
+                        obj.copy(isEditing = false)
+                    }
                 }
+                _collections.value = updatedCollections
             }
-            _collections.value = updatedCollections
         }
     }
 
@@ -172,12 +175,5 @@ class IntelliGuessViewModel(
             _selectedSubj.value = subj
         }
     }
-
-
-//
-//
-//
-//
-//
 }
 

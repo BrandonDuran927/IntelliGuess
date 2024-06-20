@@ -86,6 +86,7 @@ fun IntelliGuessCollection(
             .background(colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "${selectedSubj?.subject}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",

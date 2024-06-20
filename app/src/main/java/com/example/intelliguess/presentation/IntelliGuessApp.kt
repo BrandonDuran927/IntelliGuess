@@ -61,6 +61,9 @@ import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
+//TODO: After done editing, it proceed the value of map to the next subject; Create a alert dialog instead if they want to exit; edit alert dialog popping twice
+
+
 @Composable
 fun IntelliGuessApp(
     navController: NavController,
@@ -233,7 +236,7 @@ fun IntelliGuessApp(
                         if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
                             isOnePair.value = true
                         } else {
-                            increment.intValue = (increment.intValue.plus(1) ?: 0) % oldSubj?.mapPair?.size!!
+                            increment.intValue = (increment.intValue.plus(1)) % oldSubj?.mapPair?.size!!
                         }
                     }
                 ) {
@@ -268,7 +271,7 @@ fun IntelliGuessApp(
                                     increment.intValue = 0
                                 } else {
                                     increment.intValue =
-                                        (increment.intValue.plus(1) ?: 0) % oldSubj?.mapPair?.size!!
+                                        (increment.intValue.plus(1)) % oldSubj?.mapPair?.size!!
                                 }
                             }
                             Toast.makeText(loc, "${selectedSubj?.mapPair?.size}", Toast.LENGTH_SHORT).show()
