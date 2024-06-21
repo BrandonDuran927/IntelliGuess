@@ -86,7 +86,8 @@ fun IntelliGuessCollection(
             .background(colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "${selectedSubj?.subject}")
+        Text(text = "SelectedSubj: ${selectedSubj?.subject}")
+        Text(text = "SelectedSubj editing: ${viewModel.selectedSubj.value?.isEditing}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",
@@ -213,7 +214,8 @@ fun IntelliGuessCollection(
                                 viewModel.deleteFromMap(obj, key)
                             },
                             onEdit = { key, value ->
-                                obj.isEditing = true
+                                //obj.isEditing = true
+                                //viewModel.setTrueSubj(obj)
                                 isEditing.value = true
                                 currTitle.value = key
                                 editedDesc.value = value
@@ -221,7 +223,7 @@ fun IntelliGuessCollection(
                             }
                         )
                     }
-                    if (selectedSubj?.isEditing == obj.isEditing) {
+                    if (obj.isEditing) {
                         IntelliGuessEditItem(
                             obj = obj,
                             isEditing = isEditing,

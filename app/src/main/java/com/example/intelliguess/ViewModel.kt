@@ -59,29 +59,19 @@ class IntelliGuessViewModel(
 
     fun modifyMap(subj: SubjCollectionEnt, description: String, title: String) {
         viewModelScope.launch {
-            val currentCollections = _collections.value?.toMutableList() ?: mutableListOf()
-
-            val currentSubj = _collections.value?.find { it.subject == subj.subject }
-            currentSubj.let {
-                val updatedMapPair = currentSubj?.mapPair?.toMutableMap()?.apply {
-                    put(description.trim(), title.trim())
+            val updatedCollections = _collections.value?.map { collection ->
+                if (collection.subject == subj.subject) {
+                    val updatedMapPair = collection.mapPair.toMutableMap().apply {
+                        put(description.trim(), title.trim())
+                    }
+                    collection.copy(mapPair = updatedMapPair, isEditing = false)
+                } else {
+                    collection
                 }
-                val updatedSubj = updatedMapPair?.let { currentSubj.copy(mapPair = it) }
-
-                // Update the local list
-                val index = currentCollections.indexOf(subj)
-                if (index != -1 && updatedSubj != null) {
-                    currentCollections[index] = updatedSubj
-                }
-
-                // Update the database
-                if (updatedSubj != null) {
-                    dao.upsertSubjCollection(updatedSubj)
-                }
-
-                // Update the LiveData
-                _collections.value = dao.getAllSubjCollections()
-                _selectedSubj.value = updatedSubj!!
+            }
+            if (updatedCollections != null) {
+                _collections.value = updatedCollections!!
+                dao.upsertSubjCollection(updatedCollections.first { it.subject == subj.subject })
             }
         }
     }
@@ -118,6 +108,22 @@ class IntelliGuessViewModel(
             }
         }
     }
+    fun startEditing(subj: SubjCollectionEnt) {
+        viewModelScope.launch {
+            _collections.value?.let { list ->
+                val updatedCollections = list.map { obj ->
+                    if (obj == subj) {
+                        obj.copy(isEditing = true)
+                    } else {
+                        obj.copy(isEditing = false)
+                    }
+                }
+                dao.updateSubjCollection(updatedCollections)
+                _collections.value = dao.getAllSubjCollections()
+            }
+        }
+    }
+
     fun deleteFromMap(subj: SubjCollectionEnt, key: String) {
         viewModelScope.launch {
             val updatedMap = subj.mapPair.toMutableMap().apply {
@@ -129,17 +135,29 @@ class IntelliGuessViewModel(
             _selectedSubj.value = updatedObj
         }
     }
-    fun startEditing(subj: SubjCollectionEnt) {
+
+    fun setTrueSubj(subj: SubjCollectionEnt) {
         viewModelScope.launch {
-            _collections.value?.let { list ->
-                val updatedCollections = list.map { obj ->
-                    if (obj == subj) {
-                        obj.copy(isEditing = true)
-                    } else {
-                        obj.copy(isEditing = false)
-                    }
-                }
-                _collections.value = updatedCollections
+            val updatedSubj = _collections.value?.find {
+                subj == it
+            }
+            updatedSubj?.isEditing = true
+            if (updatedSubj != null) {
+                dao.upsertSubjCollection(updatedSubj)
+                _collections.value = dao.getAllSubjCollections()
+            }
+        }
+    }
+
+    fun setFalseSubj(subj: SubjCollectionEnt) {
+        viewModelScope.launch {
+            val updatedSubj = _collections.value?.find {
+                subj == it
+            }
+            updatedSubj?.isEditing = false
+            if (updatedSubj != null) {
+                dao.upsertSubjCollection(updatedSubj)
+                _collections.value = dao.getAllSubjCollections()
             }
         }
     }

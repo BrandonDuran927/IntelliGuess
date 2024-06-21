@@ -1,5 +1,6 @@
 package com.example.intelliguess.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ fun IntelliGuessEditItem(
     currTitle: MutableState<String>,
     viewModel: IntelliGuessViewModel
 ) {
+    val loc = LocalContext.current
     if (isEditing.value) {
         AlertDialog(
             onDismissRequest = { isEditing.value = false },
@@ -40,7 +43,7 @@ fun IntelliGuessEditItem(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = currTitle.value,
+                        text = "${currTitle.value} ${obj.isEditing} ${obj.subject}",
                         fontSize = 24.sp,
                         color = colorResource(id = R.color.Secondary),
                         fontWeight = FontWeight.ExtraBold
@@ -76,8 +79,10 @@ fun IntelliGuessEditItem(
                     Button(
                         onClick = {
                             viewModel.modifyMap(obj, currTitle.value, editedDesc.value)
+                            Toast.makeText(loc, "edited the ${obj.subject}", Toast.LENGTH_SHORT).show()
                             isEditing.value = false
                             obj.isEditing = false
+                            //viewModel.setFalseSubj(obj)
                         },
                         colors = ButtonDefaults.buttonColors(
                             colorResource(id = R.color.Secondary)
