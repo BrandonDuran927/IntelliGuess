@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.IntelliGuessViewModel
-import com.example.intelliguess.SubjCollectionEnt
+import com.example.intelliguess.data.SubjCollectionEnt
 
 @Composable
 fun ShowDialogItem(

@@ -55,6 +55,8 @@ import com.example.intelliguess.presentation.IntelliGuessCollection
 import com.example.intelliguess.ui.theme.IntelliGuessTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: IntelliGuessViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,81 +87,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun MyApp() {
-    val showGuide = rememberSaveable { mutableStateOf(true) }
-    val buttonPosition = remember { mutableStateOf(Offset.Zero) }
-    val buttonSize = remember { mutableStateOf(Size.Zero) }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Button(
-                onClick = { /* Navigate to collections */ },
-                modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        val position = coordinates.localToRoot(Offset.Zero)
-                        buttonPosition.value = position
-                        buttonSize.value = coordinates.size.toSize()
-                    }
-            ) {
-                Text(text = "Proceed to Collections")
-            }
-        }
-
-        if (showGuide.value) {
-            GuideOverlay(
-                onDismiss = { showGuide.value = false },
-                targetPosition = buttonPosition.value,
-                targetSize = buttonSize.value
-            )
-        }
-    }
-}
-
-@Composable
-fun GuideOverlay(
-    onDismiss: () -> Unit,
-    targetPosition: Offset,
-    targetSize: Size
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.7f))
-            .clickable { onDismiss() }
-    ) {
-        Canvas(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            drawRect(
-                color = Color.Transparent,
-                topLeft = targetPosition,
-                size = targetSize,
-                blendMode = BlendMode.Clear
-            )
-        }
-        Text(
-            text = "Click here to proceed to the collections",
-            color = Color.White,
-            fontSize = 20.sp,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        )
-    }
-}
-
-
-@Composable
-@Preview(showBackground = true)
-fun DefaultPreview() {
-    MyApp()
 }
 
 

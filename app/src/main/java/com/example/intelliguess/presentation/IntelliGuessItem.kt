@@ -14,12 +14,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.intelliguess.SubjCollectionEnt
-import com.example.intelliguess.data.SubjCollection
+import com.example.intelliguess.data.SubjCollectionEnt
 
 @Composable
 fun IntelliGuessItem(
@@ -27,8 +25,6 @@ fun IntelliGuessItem(
     onDelete: (String) -> Unit,
     onEdit: (String, String) -> Unit
 ) {
-    // val loc = LocalContext.current
-
     obj.mapPair.forEach { (key, value) ->
         Row(
             modifier = Modifier

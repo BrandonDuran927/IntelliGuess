@@ -1,11 +1,10 @@
 package com.example.intelliguess
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.intelliguess.data.SubjCollectionEnt
 import kotlinx.coroutines.launch
 
 class IntelliGuessViewModel(
@@ -18,6 +17,8 @@ class IntelliGuessViewModel(
     private val _selectedSubj = MutableLiveData<SubjCollectionEnt>()
     val selectedSubj: LiveData<SubjCollectionEnt>
         get() = _selectedSubj
+
+    private val _oldSubj = MutableLiveData<SubjCollectionEnt>()
 
     init {
         viewModelScope.launch {
@@ -44,10 +45,9 @@ class IntelliGuessViewModel(
     fun remove(subj: SubjCollectionEnt) {
         viewModelScope.launch {
             dao.deleteSubjCollection(subj)
-            _collections.value =
-                dao.getAllSubjCollections() // Update the collections after deletion
+            _collections.value = dao.getAllSubjCollections() // Update the collections after deletion
             if (_collections.value!!.isNotEmpty()) {
-                _selectedSubj.value = _collections.value!!.last() ?: null
+                _selectedSubj.value = _collections.value!!.last()
             }
         }
 
@@ -105,6 +105,7 @@ class IntelliGuessViewModel(
 
                 if (updatedSubj.mapPair.isEmpty()) {
                     _selectedSubj.value = oldSubj
+                    _oldSubj.value = oldSubj
                 }
             }
         }
@@ -165,6 +166,7 @@ class IntelliGuessViewModel(
             dao.upsertSubjCollection(subj) // Assuming subj has the original mapPair
             _collections.value = dao.getAllSubjCollections()
             _selectedSubj.value = subj
+            _oldSubj.value = subj
         }
     }
 }

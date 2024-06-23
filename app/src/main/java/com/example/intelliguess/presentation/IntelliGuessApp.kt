@@ -1,6 +1,7 @@
 package com.example.intelliguess.presentation
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -54,14 +55,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
-import com.example.intelliguess.SubjCollectionEnt
+import com.example.intelliguess.data.SubjCollectionEnt
 import com.example.intelliguess.navigation.Screen
+import com.example.intelliguess.presentation.alertdialogs.ExitConfirmation
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
 import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
-//TODO: Create a alert dialog instead if they want to exit; edit alert dialog popping twice
+//TODO: Create a alert dialog instead if they want to exit
 
 
 @Composable
@@ -73,6 +75,7 @@ fun IntelliGuessApp(
     val hint = remember { mutableStateOf(false) }
     val isOnePair = remember { mutableStateOf(false) }
     val userWin = remember { mutableStateOf(false) }
+    val showExitDialog = remember { mutableStateOf(false) }
 
     val input = remember { mutableStateOf("") }
     val count = remember { mutableIntStateOf(0) }
@@ -99,14 +102,16 @@ fun IntelliGuessApp(
     }
     val loc = LocalContext.current
 
+    BackHandler {
+        showExitDialog.value = true
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Selected Subj: ${selectedSubj?.mapPair}")
-        Text(text = "Increment: ${increment.intValue}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",
@@ -345,16 +350,7 @@ fun IntelliGuessApp(
     IsOneDict(winStreak = winStreak, isOnePair = isOnePair, navController = navController)
     UserHint(hint = hint, entry = entry)
     UserWin(userWin = userWin)
+    ExitConfirmation(navController = navController, showExitDialog = showExitDialog, viewModel = viewModel, oldSubj = oldSubj)
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun Prev(
-) {
-    IntelliGuessApp(
-        navController = rememberNavController(),
-        viewModel()
-    )
-}
 
-//TODO: fix the space of congratulations; align the skip text

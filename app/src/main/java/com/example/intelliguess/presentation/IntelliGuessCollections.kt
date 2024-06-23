@@ -53,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
 import com.example.intelliguess.navigation.Screen
+import com.example.intelliguess.presentation.alertdialogs.IntelliGuessEditItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogSubj
 
@@ -86,8 +87,6 @@ fun IntelliGuessCollection(
             .background(colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "SelectedSubj: ${selectedSubj?.subject}")
-        Text(text = "SelectedSubj editing: ${viewModel.selectedSubj.value?.isEditing}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",

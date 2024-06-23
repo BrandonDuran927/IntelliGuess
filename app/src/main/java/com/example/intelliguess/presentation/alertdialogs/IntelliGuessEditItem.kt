@@ -1,4 +1,4 @@
-package com.example.intelliguess.presentation
+package com.example.intelliguess.presentation.alertdialogs
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
-import com.example.intelliguess.SubjCollectionEnt
+import com.example.intelliguess.data.SubjCollectionEnt
 
 @Composable
 fun IntelliGuessEditItem(
