@@ -70,9 +70,10 @@ class IntelliGuessViewModel(
                 }
             }
             if (updatedCollections != null) {
-                _collections.value = updatedCollections!!
                 dao.upsertSubjCollection(updatedCollections.first { it.subject == subj.subject })
             }
+            _selectedSubj.value = updatedCollections?.first { it.subject == subj.subject }
+            _collections.value = dao.getAllSubjCollections()
         }
     }
 
@@ -135,33 +136,6 @@ class IntelliGuessViewModel(
             _selectedSubj.value = updatedObj
         }
     }
-
-    fun setTrueSubj(subj: SubjCollectionEnt) {
-        viewModelScope.launch {
-            val updatedSubj = _collections.value?.find {
-                subj == it
-            }
-            updatedSubj?.isEditing = true
-            if (updatedSubj != null) {
-                dao.upsertSubjCollection(updatedSubj)
-                _collections.value = dao.getAllSubjCollections()
-            }
-        }
-    }
-
-    fun setFalseSubj(subj: SubjCollectionEnt) {
-        viewModelScope.launch {
-            val updatedSubj = _collections.value?.find {
-                subj == it
-            }
-            updatedSubj?.isEditing = false
-            if (updatedSubj != null) {
-                dao.upsertSubjCollection(updatedSubj)
-                _collections.value = dao.getAllSubjCollections()
-            }
-        }
-    }
-
     fun getItemRandomly(num: Int, subj: SubjCollectionEnt): MutableMap.MutableEntry<String, String>? {
         val entriesList = subj.mapPair.entries.toList()
         var tmp = num

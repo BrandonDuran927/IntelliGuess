@@ -32,7 +32,8 @@ fun UserWin(
                            fontSize = 32.sp,
                            fontWeight = FontWeight.Bold,
                            color = colorResource(id = R.color.Secondary),
-                           textAlign = TextAlign.Center
+                           textAlign = TextAlign.Center,
+                           lineHeight = 32.sp
                        )
                    }
             },

@@ -61,7 +61,7 @@ import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
-//TODO: After done editing, it proceed the value of map to the next subject; Create a alert dialog instead if they want to exit; edit alert dialog popping twice
+//TODO: Create a alert dialog instead if they want to exit; edit alert dialog popping twice
 
 
 @Composable
@@ -92,7 +92,7 @@ fun IntelliGuessApp(
     val entry = selectedSubj?.let {
         increment.let { it1 ->
             viewModel.getItemRandomly(
-                it1.intValue - 1,
+                it1.intValue,
                 it
             )
         }
@@ -105,6 +105,8 @@ fun IntelliGuessApp(
             .background(color = colorResource(id = R.color.Primary)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "Selected Subj: ${selectedSubj?.mapPair}")
+        Text(text = "Increment: ${increment.intValue}")
         Image(
             painter = painterResource(id = R.drawable.icon),
             contentDescription = "Icon",
@@ -269,12 +271,8 @@ fun IntelliGuessApp(
                                     ) || viewModel.selectedSubj.value?.mapPair?.size == 1
                                 ) {
                                     increment.intValue = 0
-                                } else {
-                                    increment.intValue =
-                                        (increment.intValue.plus(1)) % oldSubj?.mapPair?.size!!
                                 }
                             }
-                            Toast.makeText(loc, "${selectedSubj?.mapPair?.size}", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
                         }

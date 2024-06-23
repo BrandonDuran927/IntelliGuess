@@ -78,11 +78,15 @@ fun IntelliGuessEditItem(
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
                         onClick = {
-                            viewModel.modifyMap(obj, currTitle.value, editedDesc.value)
-                            Toast.makeText(loc, "edited the ${obj.subject}", Toast.LENGTH_SHORT).show()
-                            isEditing.value = false
-                            obj.isEditing = false
-                            //viewModel.setFalseSubj(obj)
+                            if (currTitle.value.isNotEmpty() && editedDesc.value.isNotEmpty()) {
+                                viewModel.modifyMap(obj, currTitle.value, editedDesc.value)
+                                Toast.makeText(loc, "edited the ${obj.subject}", Toast.LENGTH_SHORT).show()
+                                isEditing.value = false
+                                obj.isEditing = false
+                                //viewModel.setFalseSubj(obj)
+                            } else {
+                                Toast.makeText(loc, "Description must not be empty", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             colorResource(id = R.color.Secondary)

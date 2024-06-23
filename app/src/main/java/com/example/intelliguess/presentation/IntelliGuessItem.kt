@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +27,8 @@ fun IntelliGuessItem(
     onDelete: (String) -> Unit,
     onEdit: (String, String) -> Unit
 ) {
+    // val loc = LocalContext.current
+
     obj.mapPair.forEach { (key, value) ->
         Row(
             modifier = Modifier
@@ -46,7 +49,10 @@ fun IntelliGuessItem(
                 Text(text = value)
             }
             IconButton(
-                onClick = { onEdit(key, value) }
+                onClick = {
+
+                    onEdit(key, value)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Edit,
