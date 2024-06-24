@@ -23,7 +23,7 @@ fun ShowDialogSubj(
 ) {
     if (showDialogSubj.value) {
         AlertDialog(
-            onDismissRequest = { showDialogSubj.value = false },
+            onDismissRequest = { showDialogSubj.value = false }, // Dispose the dialog
             text = {
                 Column {
                     Text(
@@ -41,9 +41,12 @@ fun ShowDialogSubj(
             },
             confirmButton = {
                 Button(onClick = {
-                    showDialogSubj.value = false
-                    viewModel.add(addedSubj.value.uppercase())
-                    addedSubj.value = ""
+                    // Checks whether the addSubj is not empty
+                    if (addedSubj.value.isNotEmpty()) {
+                        viewModel.add(addedSubj.value.uppercase())
+                        showDialogSubj.value = false
+                        addedSubj.value = ""
+                    }
                 }) {
                     Text(text = "Add")
                 }

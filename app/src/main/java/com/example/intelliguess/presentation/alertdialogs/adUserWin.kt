@@ -1,7 +1,6 @@
 package com.example.intelliguess.presentation.alertdialogs
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -21,7 +20,7 @@ fun UserWin(
 ) {
     if (userWin.value) {
         AlertDialog(
-            onDismissRequest = { userWin.value = false }, 
+            onDismissRequest = { userWin.value = false }, // Dispose the dialog
             text = {
                    Column(
                        modifier = Modifier.fillMaxWidth(),
@@ -37,7 +36,7 @@ fun UserWin(
                        )
                    }
             },
-            confirmButton = { /*TODO*/ }
+            confirmButton = { /* does not do anything */ }
         )
     }
 }

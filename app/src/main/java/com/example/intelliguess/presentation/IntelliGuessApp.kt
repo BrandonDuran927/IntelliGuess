@@ -63,7 +63,7 @@ import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
-//TODO: Create a alert dialog instead if they want to exit
+//TODO: App section - transitioning to other did not save the old subject
 
 
 @Composable
@@ -71,27 +71,32 @@ fun IntelliGuessApp(
     navController: NavController,
     viewModel: IntelliGuessViewModel
 ) {
-    val expand = remember { mutableStateOf(false) }
-    val hint = remember { mutableStateOf(false) }
-    val isOnePair = remember { mutableStateOf(false) }
-    val userWin = remember { mutableStateOf(false) }
-    val showExitDialog = remember { mutableStateOf(false) }
+    val expand = remember { mutableStateOf(false) }  // Expanding the dropdown of list of subjects
+    val hint = remember { mutableStateOf(false) }  // Triggered a hint for the user
+    val isOnePair = remember { mutableStateOf(false) }  // Set to true based on the size of the map
+    val userWin = remember { mutableStateOf(false) }  // Triggered when the user win
+    val showExitDialog = remember { mutableStateOf(false) }  // used in ExitConfirmation
 
-    val input = remember { mutableStateOf("") }
-    val count = remember { mutableIntStateOf(0) }
-    val winStreak = remember { mutableIntStateOf(0) }
+    val input = remember { mutableStateOf("") }  // Store the users input
+    val count = remember { mutableIntStateOf(0) }  // Count the total win to compare with size of map
 
+    // Observe the collections in viewModel
     val collections by viewModel.collections.observeAsState(initial = emptyList())
+    // Observe the selectedSubj in viewModel
     val selectedSubj by viewModel.selectedSubj.observeAsState()
+    // Remember the old selected subject
     var oldSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
 
+    // Store a copy of the selected subject when it is first set into oldSubj
     LaunchedEffect(selectedSubj) {
         if (selectedSubj != null && oldSubj == null) {
             oldSubj = selectedSubj?.copy()
         }
     }
 
+    // Remember a number from getItemRandomly() under viewModel
     val increment = remember { mutableIntStateOf(viewModel.getItemRandomly() ?: 0) }
+    // Generate a random entry (key) based on increment value using the getItemRandomly
     val entry = selectedSubj?.let {
         increment.let { it1 ->
             viewModel.getItemRandomly(
@@ -100,8 +105,8 @@ fun IntelliGuessApp(
             )
         }
     }
-    val loc = LocalContext.current
-
+    val loc = LocalContext.current  // store the current context
+    // Intercept the back button press to show the exit confirmation dialog
     BackHandler {
         showExitDialog.value = true
     }
@@ -123,6 +128,7 @@ fun IntelliGuessApp(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
+                // Checks the map of selectedSubj and collections if not empty
                 if (selectedSubj?.mapPair?.isNotEmpty() != null && collections.isNotEmpty()) {
                     TextButton(
                         onClick = { expand.value = true },
@@ -153,9 +159,13 @@ fun IntelliGuessApp(
                                     )
                                 },
                                 onClick = {
+                                    // Store the founded subject using find
                                     val foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                    // Set the selectedSubject as foundSubj
                                     viewModel.setCurrentSubject(foundSubj)
+                                    // Set the oldSubj to foundSubj
                                     oldSubj = foundSubj
+                                    // Dispose the drop down
                                     expand.value = false
                                 }
                             )
@@ -163,8 +173,10 @@ fun IntelliGuessApp(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     TextButton(onClick = {
+                        // Navigate through the item composable screen
                         navController.navigate(route = Screen.Item.route)
                         if (oldSubj != null) {
+                            // Retrieve the map odl value if oldSubj is not null
                             viewModel.resetMap(oldSubj!!)
                         }
                     }) {
@@ -189,6 +201,7 @@ fun IntelliGuessApp(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Display the entry text if map and collections is not empty
             if (selectedSubj?.mapPair?.isNotEmpty() == true && viewModel.collections.value?.isNotEmpty() == true) {
                 Text(
                     text = entry?.value.toString(),
@@ -240,9 +253,10 @@ fun IntelliGuessApp(
                 Spacer(modifier = Modifier.width(10.dp))
                 TextButton(
                     onClick = {
+                        // Set the isOnePair to true if the size of map is equivalent to 1
                         if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
                             isOnePair.value = true
-                        } else {
+                        } else { // Change the value of increment
                             increment.intValue = (increment.intValue.plus(1)) % oldSubj?.mapPair?.size!!
                         }
                     }
@@ -255,37 +269,38 @@ fun IntelliGuessApp(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Button(
-                    onClick = {
-                        if (input.value.lowercase() == entry.key.lowercase()) {
-                            count.intValue += 1
-                            winStreak.intValue += 1
-                            viewModel.modifyMap(
-                                selectedSubj!!,
-                                entry.key,
-                                oldSubj!!
-                            )
-                            if (count.intValue == oldSubj?.mapPair?.size) { // User wins
-                                userWin.value = true
-                                viewModel.resetMap(oldSubj!!)
-                                count.intValue = 0
-                                increment.intValue = viewModel.getItemRandomly() ?: 0
-                                winStreak.intValue = 0
-                            } else {
-                                if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
-                                        1
-                                    ) || viewModel.selectedSubj.value?.mapPair?.size == 1
-                                ) {
-                                    increment.intValue = 0
-                                }
-                            }
-                        } else {
-                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
-                        }
-                    },
                     modifier = Modifier.width(100.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.Secondary)
-                    )
+                    ),
+                    onClick = {
+                        // If the users input is incorrect, it will display a toast
+                        if (input.value.lowercase() != entry.key.lowercase()) {
+                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
+                        }
+                        count.intValue += 1  // Increment a 1 into count
+                        // Remove the entry from the selectedSubj
+                        viewModel.modifyMap(
+                            selectedSubj!!,
+                            entry.key,
+                            oldSubj!!
+                        )
+                        // Indicated that the user wins
+                        if (count.intValue == oldSubj?.mapPair?.size) {
+                            userWin.value = true
+                            viewModel.resetMap(oldSubj!!)
+                            count.intValue = 0
+                            increment.intValue = viewModel.getItemRandomly() ?: 0
+                        } else {
+                            // Set the increment value to zero once the increment is equal to map or the size of map is one
+                            if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
+                                    1
+                                ) || viewModel.selectedSubj.value?.mapPair?.size == 1
+                            ) {
+                                increment.intValue = 0
+                            }
+                        }
+                    }
                 ) {
                     Text(text = "Submit", fontSize = 16.sp)
                 }
@@ -320,7 +335,7 @@ fun IntelliGuessApp(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Win streak: ${winStreak.intValue}",
+                text = "Win streak: ${count.intValue}",
                 fontStyle = FontStyle.Italic,
                 color = Color.White
             )
@@ -339,17 +354,22 @@ fun IntelliGuessApp(
                 Text(
                     text = "© 2024 Brandon Duran",
                     fontStyle = FontStyle.Italic,
-                    color = Color.White.copy(alpha = 0.4F)
+                    color = Color.White.copy(alpha = 0.4F)  // Adjust the opacity
                 )
             }
         }
     }
+    // Add another condition so it will not pop up the alert dialog when the app start
     if (viewModel.collections.value?.isEmpty() == true) {
         IsCollectionEmpty(collections = collections, navController = navController)
     }
-    IsOneDict(winStreak = winStreak, isOnePair = isOnePair, navController = navController)
+    // Show a dialog if the size of map is one
+    IsOneDict(winStreak = count, isOnePair = isOnePair, navController = navController)
+    // Show the hint to the user
     UserHint(hint = hint, entry = entry)
+    // Congratulates the user using alert dialog
     UserWin(userWin = userWin)
+    // Shows an alert dialog to the user if they want to exit
     ExitConfirmation(navController = navController, showExitDialog = showExitDialog, viewModel = viewModel, oldSubj = oldSubj)
 }
 

@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.intelliguess.data.SubjCollectionEnt
 
+
+// This composable is to diplay each item/pairs from map
 @Composable
 fun IntelliGuessItem(
     obj: SubjCollectionEnt,
@@ -45,10 +47,7 @@ fun IntelliGuessItem(
                 Text(text = value)
             }
             IconButton(
-                onClick = {
-
-                    onEdit(key, value)
-                }
+                onClick = { onEdit(key, value) }  // Pass the key and value as argument to onEdit()
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Edit,
@@ -56,7 +55,7 @@ fun IntelliGuessItem(
                 )
             }
             IconButton(
-                onClick = { onDelete(key) }
+                onClick = { onDelete(key) }  // Pass the key as argument to onDelete()
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Delete,

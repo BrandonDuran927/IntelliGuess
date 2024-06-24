@@ -34,10 +34,10 @@ fun IntelliGuessEditItem(
     currTitle: MutableState<String>,
     viewModel: IntelliGuessViewModel
 ) {
-    val loc = LocalContext.current
+    val loc = LocalContext.current  // Get the current context
     if (isEditing.value) {
         AlertDialog(
-            onDismissRequest = { isEditing.value = false },
+            onDismissRequest = { isEditing.value = false }, // Dispose the dialog
             text = {
                 Column(
                     modifier = Modifier.fillMaxWidth()
@@ -80,7 +80,6 @@ fun IntelliGuessEditItem(
                         onClick = {
                             if (currTitle.value.isNotEmpty() && editedDesc.value.isNotEmpty()) {
                                 viewModel.modifyMap(obj, currTitle.value, editedDesc.value)
-                                Toast.makeText(loc, "edited the ${obj.subject}", Toast.LENGTH_SHORT).show()
                                 isEditing.value = false
                                 obj.isEditing = false
                                 //viewModel.setFalseSubj(obj)

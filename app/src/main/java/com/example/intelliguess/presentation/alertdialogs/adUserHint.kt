@@ -29,9 +29,7 @@ fun UserHint(
 ) {
     if (hint.value) {
         AlertDialog(
-            onDismissRequest = {
-                hint.value = false
-            },
+            onDismissRequest = { hint.value = false }, // Dispose the dialog
             text = {
                 Column {
                     Row(
@@ -56,12 +54,15 @@ fun UserHint(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                     ) {
+                        // Makes the key become a list
                         val splitKey = entry?.key?.split(' ')
+                        // Greater than 1, will display the total size of splitKey
                         if (splitKey?.size!! > 1) {
                             Text(
                                 text = "The answer consists of ${splitKey.size} words",
                                 fontSize = 20.sp
                             )
+                        // Display only the char length of the word
                         } else {
                             Text(
                                 text = "This word has ${entry.key.length} letters",
@@ -72,7 +73,7 @@ fun UserHint(
                     }
                 }
             },
-            confirmButton = {  }
+            confirmButton = { /* Does not do anything */ }
         )
     }
 }

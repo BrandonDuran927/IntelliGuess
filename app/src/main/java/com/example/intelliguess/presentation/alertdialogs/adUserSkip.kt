@@ -37,12 +37,14 @@ fun IsOneDict(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // More than or equal to one display a "One question left" to continue
                     if (winStreak.intValue >= 1) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "One question left",
                             fontSize = 24.sp
                         )
+                    // The user has one dictionary only
                     } else {
                         Text(
                             text = "You only have one dictionary, add more to skip",
@@ -57,26 +59,52 @@ fun IsOneDict(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
-                        onClick = {
-                            isOnePair.value = false
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            colorResource(id = R.color.white)
-                        )
-                    ) {
-                        Text(text = "Dismiss", color = Color.Black)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Button(
-                        onClick = {
-                            navController.navigate(Screen.Item.route)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            colorResource(id = R.color.Secondary)
-                        )
-                    ) {
-                        Text(text = "Add More")
+                    // More than or equal to one display a "One question left" to continue
+                    if (winStreak.intValue >= 1) {
+                        Button(
+                            onClick = {
+                                isOnePair.value = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                colorResource(id = R.color.white)
+                            )
+                        ) {
+                            Text(text = "Dismiss", color = Color.Black)
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Button(
+                            onClick = {
+                                isOnePair.value = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                colorResource(id = R.color.Secondary)
+                            )
+                        ) {
+                            Text(text = "Continue")
+                        }
+                    // The user has one dictionary only
+                    } else {
+                        Button(
+                            onClick = {
+                                isOnePair.value = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                colorResource(id = R.color.white)
+                            )
+                        ) {
+                            Text(text = "Dismiss", color = Color.Black)
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Button(
+                            onClick = {
+                                navController.navigate(Screen.Item.route)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                colorResource(id = R.color.Secondary)
+                            )
+                        ) {
+                            Text(text = "Add More")
+                        }
                     }
                 }
             }

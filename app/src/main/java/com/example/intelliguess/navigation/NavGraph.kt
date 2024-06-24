@@ -17,9 +17,10 @@ fun SetupNavGraph(
     navController: NavHostController,
     viewModel: IntelliGuessViewModel
 ) {
+    // Handles navigation between destinations
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Home.route // Start-up destination when the application runs
     ) {
         composable(
             route = Screen.Home.route

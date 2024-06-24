@@ -64,20 +64,22 @@ fun IntelliGuessCollection(
     navController: NavController,
     viewModel: IntelliGuessViewModel
 ) {
-    val expand = remember { mutableStateOf(false) }
-    val showDialogSubj = remember { mutableStateOf(false) }
-    val showDialogItem = remember { mutableStateOf(false) }
-    val isEditing = remember { mutableStateOf(false) }
+    val expand = remember { mutableStateOf(false) }  // Expand the drop down menu for list of subjects
+    val showDialogSubj = remember { mutableStateOf(false) }  // Triggered when the user wants to add a subject
+    val showDialogItem = remember { mutableStateOf(false) }  // Triggered when the user wants to add a dictionary
+    val isEditing = remember { mutableStateOf(false) }  // Enables the user to edit the dictionary
 
-    val addedSubj = remember { mutableStateOf("") }
-    val title = remember { mutableStateOf("") }
-    val description = remember { mutableStateOf("") }
-    val editedDesc = remember { mutableStateOf("") }
-    val currTitle = remember { mutableStateOf("") }
+    val addedSubj = remember { mutableStateOf("") }  // Text of the specific subject
+    val title = remember { mutableStateOf("") }  // Title of dictionary
+    val description = remember { mutableStateOf("") }  // Description of the dictionary
+    val editedDesc = remember { mutableStateOf("") }  // Edited description
+    val currTitle = remember { mutableStateOf("") }  // Store the current title
 
-    val loc = LocalContext.current
+    val loc = LocalContext.current  // Retrieves the current context
 
+    // Observe the list of SubjectCollection
     val collections by viewModel.collections.observeAsState(initial = emptyList())
+    // Observe the current selected subject
     val selectedSubj by viewModel.selectedSubj.observeAsState()
 
 
@@ -105,6 +107,7 @@ fun IntelliGuessCollection(
                         containerColor = colorResource(id = R.color.Secondary)
                     )
                 ) {
+                    // If collection is not empty, display the text of the selectedSubj subject
                     if (viewModel.collections.value?.isNotEmpty() == true) {
                         selectedSubj?.subject?.let {
                             Text(
@@ -127,8 +130,7 @@ fun IntelliGuessCollection(
                     }
                 }
                 IconButton(onClick = {
-                    //shows a dialog
-                    showDialogSubj.value = true
+                    showDialogSubj.value = true // Shows the dialog of adding a subject
                 }) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
@@ -138,6 +140,7 @@ fun IntelliGuessCollection(
                     )
                 }
                 IconButton(onClick = {
+                    // Proceed to home screen
                     navController.navigate(route = Screen.Home.route) {
                         popUpTo(Screen.Home.route)
                     }
@@ -155,6 +158,7 @@ fun IntelliGuessCollection(
                 onDismissRequest = { expand.value = false },
                 modifier = Modifier.width(250.dp)
             ) {
+                // Display all the subject through dropDownMenuItem composable if collections is not empty
                 if (collections.isNotEmpty()) {
                     collections.forEach { subj ->
                         DropdownMenuItem(
@@ -174,6 +178,7 @@ fun IntelliGuessCollection(
                                             if (viewModel.collections.value?.size == 1) {
                                                 expand.value = false
                                             }
+                                            // Removes the specific subj
                                             viewModel.remove(subj)
                                         },
                                         modifier = Modifier.size(25.dp)
@@ -189,6 +194,7 @@ fun IntelliGuessCollection(
                                 // Find the SubjCollection with the matching subject
                                 val foundSubj =
                                     viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                // Set the founded subj as current subject
                                 viewModel.setCurrentSubject(foundSubj)
                                 expand.value = false // Dismiss the DropdownMenu
                             }
@@ -206,22 +212,23 @@ fun IntelliGuessCollection(
                     .padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
             ) {
                 items(collections) { obj ->
+                    // Display each item if selectedSubj.subject is equal to obj.subject
                     if (selectedSubj?.subject == obj.subject) {
                         IntelliGuessItem(
                             obj,
                             onDelete = { key ->
+                                // Delete the key from the obj (Type of selected subj)
                                 viewModel.deleteFromMap(obj, key)
                             },
                             onEdit = { key, value ->
-                                //obj.isEditing = true
-                                //viewModel.setTrueSubj(obj)
-                                isEditing.value = true
-                                currTitle.value = key
-                                editedDesc.value = value
-                                viewModel.startEditing(obj)
+                                isEditing.value = true  // Set the isEditing of obj to true
+                                currTitle.value = key  // Set the key as current title
+                                editedDesc.value = value  // Set the value as as editedDesc
+                                viewModel.startEditing(obj)  // Starts editing the obj
                             }
                         )
                     }
+                    // Pop up an alert dialog if obj isEditing
                     if (obj.isEditing) {
                         IntelliGuessEditItem(
                             obj = obj,
@@ -234,11 +241,11 @@ fun IntelliGuessCollection(
                 }
             }
 
+            // Shows a plus icon if collections is not empty using FAB
             if (viewModel.collections.value?.isNotEmpty() == true) {
                 FloatingActionButton(
                     onClick = {
                         showDialogItem.value = true
-                        Toast.makeText(loc, "${selectedSubj?.subject}", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
                         .padding(40.dp)
@@ -263,13 +270,15 @@ fun IntelliGuessCollection(
                 Text(
                     text = "© 2024 Brandon Duran",
                     fontStyle = FontStyle.Italic,
-                    color = Color.White.copy(alpha = 0.4F)
+                    color = Color.White.copy(alpha = 0.4F)  // Adjust the opacity of text
                 )
             }
         }
 
     }
+    // Responsible for showing the process of adding a subject if showDialogSubj is true
     ShowDialogSubj(showDialogSubj = showDialogSubj, addedSubj = addedSubj, viewModel = viewModel)
+    // If selectedSubj is not null, it will show the process of adding a dictionary
     selectedSubj?.let {
         ShowDialogItem(
             showDialogItem = showDialogItem,
@@ -279,15 +288,7 @@ fun IntelliGuessCollection(
             selectedSubj = it
         )
     }
-//    selectedSubj?.let {
-//        ShowDialogItem(
-//        showDialogItem = showDialogItem,
-//        title = title,
-//        description = description,
-//        viewModel = viewModel,
-//        selectedSubj = it
-//    )
-//    }
+
 }
 
 

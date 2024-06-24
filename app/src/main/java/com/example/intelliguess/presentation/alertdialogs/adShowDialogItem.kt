@@ -27,7 +27,7 @@ fun ShowDialogItem(
 ) {
     if (showDialogItem.value) {
         AlertDialog(
-            onDismissRequest = { showDialogItem.value = false },
+            onDismissRequest = { showDialogItem.value = false }, // Dispose the dialog
             text = {
                 Column {
                     Text(
@@ -53,6 +53,7 @@ fun ShowDialogItem(
                 Button(onClick = {
                     if (title.value.isNotBlank() && description.value.isNotBlank()) {
                         selectedSubj.let { subj ->
+                            // Add a pair of dictionary into the map
                             viewModel.modifyMap(subj, title.value.uppercase().trim(), description.value.trim())
                         }
                         title.value = ""

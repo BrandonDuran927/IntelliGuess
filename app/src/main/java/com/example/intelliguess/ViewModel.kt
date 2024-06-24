@@ -10,16 +10,21 @@ import kotlinx.coroutines.launch
 class IntelliGuessViewModel(
     private val dao: SubjCollectionDao
 ) : ViewModel() {
+
+    // Responsible for updating the collections continuously using the LiveData
     private val _collections = MutableLiveData<List<SubjCollectionEnt>>()
     val collections: LiveData<List<SubjCollectionEnt>>
         get() = _collections
 
+    // Responsible for updating the current subject continuously using the LiveData
     private val _selectedSubj = MutableLiveData<SubjCollectionEnt>()
     val selectedSubj: LiveData<SubjCollectionEnt>
         get() = _selectedSubj
 
+    // Stores the previous selected subject
     private val _oldSubj = MutableLiveData<SubjCollectionEnt>()
 
+    // Initializer of this class
     init {
         viewModelScope.launch {
             // Ensures the LiveData _collections contains the latest data
@@ -32,6 +37,7 @@ class IntelliGuessViewModel(
         }
     }
 
+    // Add a new object/entity
     fun add(addedSubj: String) {
         viewModelScope.launch {
             val newPair = mutableMapOf<String, String>()
@@ -42,6 +48,7 @@ class IntelliGuessViewModel(
         }
     }
 
+    // Removes an object/entity
     fun remove(subj: SubjCollectionEnt) {
         viewModelScope.launch {
             dao.deleteSubjCollection(subj)
@@ -53,10 +60,12 @@ class IntelliGuessViewModel(
 
     }
 
+    // Set the value of subj to _selectedSubj
     fun setCurrentSubject(subj: SubjCollectionEnt) {
         _selectedSubj.value = subj
     }
 
+    // Responsible for adding a dictionary or editing the existing dictionary
     fun modifyMap(subj: SubjCollectionEnt, description: String, title: String) {
         viewModelScope.launch {
             val updatedCollections = _collections.value?.map { collection ->
@@ -77,6 +86,8 @@ class IntelliGuessViewModel(
         }
     }
 
+    // Responsible for removing a key in the current subj and when the size of the map is 0, the
+    // oldSubj will passed its value to the _selectedSubj
     fun modifyMap(subj: SubjCollectionEnt, key: String, oldSubj: SubjCollectionEnt) {
         viewModelScope.launch {
             val currentCollections = _collections.value?.toMutableList() ?: mutableListOf()
@@ -110,6 +121,8 @@ class IntelliGuessViewModel(
             }
         }
     }
+
+    // Start editing the object/entity
     fun startEditing(subj: SubjCollectionEnt) {
         viewModelScope.launch {
             _collections.value?.let { list ->
@@ -126,6 +139,7 @@ class IntelliGuessViewModel(
         }
     }
 
+    // Delete a key from map directly without retrieving
     fun deleteFromMap(subj: SubjCollectionEnt, key: String) {
         viewModelScope.launch {
             val updatedMap = subj.mapPair.toMutableMap().apply {
@@ -137,6 +151,8 @@ class IntelliGuessViewModel(
             _selectedSubj.value = updatedObj
         }
     }
+
+    // Generate a random entry in the map
     fun getItemRandomly(num: Int, subj: SubjCollectionEnt): MutableMap.MutableEntry<String, String>? {
         val entriesList = subj.mapPair.entries.toList()
         var tmp = num
@@ -151,6 +167,8 @@ class IntelliGuessViewModel(
             null
         }
     }
+
+    // Generate a random number between 0 to the size of the map of _selectedSubj
     fun getItemRandomly(): Int? {
         val size = _selectedSubj.value?.mapPair?.size ?: 0
 
@@ -161,6 +179,7 @@ class IntelliGuessViewModel(
         }
     }
 
+    // Reset the map to _oldSubj
     fun resetMap(subj: SubjCollectionEnt) {
         viewModelScope.launch {
             dao.upsertSubjCollection(subj) // Assuming subj has the original mapPair

@@ -55,15 +55,13 @@ import com.example.intelliguess.presentation.IntelliGuessCollection
 import com.example.intelliguess.ui.theme.IntelliGuessTheme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: IntelliGuessViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Get the DAO instance
         val dao = SubjCollectionDatabase.getDatabase(application).dao
 
-        // Create the ViewModelFactory
+        // Create the ViewModelFactory and passed the dao as argument
         val factory = IntelliGuessViewModelFactory(dao)
 
         // Use the ViewModelFactory to get the ViewModel
@@ -78,6 +76,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // Create an instance of NavController
                     val navController = rememberNavController()
                     SetupNavGraph(
                         navController = navController,
@@ -87,7 +86,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 

@@ -28,7 +28,7 @@ fun IsCollectionEmpty(
 ) {
     if (collections.isEmpty()) {
         AlertDialog(
-            onDismissRequest = { /* TODO */ },
+            onDismissRequest = { /* Does not do anything */ },
             confirmButton = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
