@@ -26,11 +26,13 @@ fun SetupNavGraph(
             route = Screen.Home.route
         ) {
             IntelliGuessApp(navController, viewModel)
+            viewModel.isInHomeScreen.value = true
         }
         composable(
             route = Screen.Item.route
         ) {
             IntelliGuessCollection(navController, viewModel)
+            viewModel.isInHomeScreen.value = false
         }
     }
 }

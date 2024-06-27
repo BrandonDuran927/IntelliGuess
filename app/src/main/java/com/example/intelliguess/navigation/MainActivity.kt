@@ -1,6 +1,7 @@
 package com.example.intelliguess.navigation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -28,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
@@ -55,6 +60,8 @@ import com.example.intelliguess.presentation.IntelliGuessCollection
 import com.example.intelliguess.ui.theme.IntelliGuessTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: IntelliGuessViewModel
+    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,10 +71,9 @@ class MainActivity : ComponentActivity() {
         // Create the ViewModelFactory and passed the dao as argument
         val factory = IntelliGuessViewModelFactory(dao)
 
-        // Use the ViewModelFactory to get the ViewModel
-        val viewModel: IntelliGuessViewModel by viewModels {
-            factory
-        }
+        // Initialize the ViewModel using the ViewModelFactory
+        viewModel = ViewModelProvider(this, factory).get(IntelliGuessViewModel::class.java)
+
 
         setContent {
             IntelliGuessTheme {
@@ -84,6 +90,13 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (viewModel.isInHomeScreen.value == true) {
+            viewModel.resetMap() // Reset the map when the user exit from the app
         }
     }
 }

@@ -57,13 +57,14 @@ import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
 import com.example.intelliguess.data.SubjCollectionEnt
 import com.example.intelliguess.navigation.Screen
+import com.example.intelliguess.presentation.alertdialogs.ChangeSubject
 import com.example.intelliguess.presentation.alertdialogs.ExitConfirmation
+import com.example.intelliguess.presentation.alertdialogs.IncorrectAnswer
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
 import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
-//TODO: App section - transitioning to other did not save the old subject
 
 
 @Composable
@@ -76,6 +77,10 @@ fun IntelliGuessApp(
     val isOnePair = remember { mutableStateOf(false) }  // Set to true based on the size of the map
     val userWin = remember { mutableStateOf(false) }  // Triggered when the user win
     val showExitDialog = remember { mutableStateOf(false) }  // used in ExitConfirmation
+    val changeSubject = remember { mutableStateOf(false) }  // used in changing the subject
+    val isSubjectChange = remember { mutableStateOf(false) }  // used when the user confirm to change the subject
+    val isWrong = remember { mutableStateOf(false) }  // used when whether the answer of the user is correct or not
+
 
     val input = remember { mutableStateOf("") }  // Store the users input
     val count = remember { mutableIntStateOf(0) }  // Count the total win to compare with size of map
@@ -87,10 +92,16 @@ fun IntelliGuessApp(
     // Remember the old selected subject
     var oldSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
 
+    // Used to retrieved the matched object/entity
+    var foundSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
+
     // Store a copy of the selected subject when it is first set into oldSubj
     LaunchedEffect(selectedSubj) {
         if (selectedSubj != null && oldSubj == null) {
             oldSubj = selectedSubj?.copy()
+            oldSubj?.let {
+                viewModel.setOldSubjectValue(it)
+            }
         }
     }
 
@@ -129,7 +140,7 @@ fun IntelliGuessApp(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 // Checks the map of selectedSubj and collections if not empty
-                if (selectedSubj?.mapPair?.isNotEmpty() != null && collections.isNotEmpty()) {
+                if (selectedSubj?.mapPair?.isNotEmpty() == true && collections.isNotEmpty()) {
                     TextButton(
                         onClick = { expand.value = true },
                         modifier = Modifier.widthIn(100.dp, 200.dp)
@@ -159,14 +170,12 @@ fun IntelliGuessApp(
                                     )
                                 },
                                 onClick = {
+                                    if (subj != selectedSubj) {
+                                        // Triggers the change subject
+                                        changeSubject.value = true
+                                    }
                                     // Store the founded subject using find
-                                    val foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
-                                    // Set the selectedSubject as foundSubj
-                                    viewModel.setCurrentSubject(foundSubj)
-                                    // Set the oldSubj to foundSubj
-                                    oldSubj = foundSubj
-                                    // Dispose the drop down
-                                    expand.value = false
+                                    foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
                                 }
                             )
                         }
@@ -257,7 +266,7 @@ fun IntelliGuessApp(
                         if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
                             isOnePair.value = true
                         } else { // Change the value of increment
-                            increment.intValue = (increment.intValue.plus(1)) % oldSubj?.mapPair?.size!!
+                            increment.intValue = (increment.intValue.plus(1)) % selectedSubj?.mapPair?.size!!
                         }
                     }
                 ) {
@@ -276,7 +285,10 @@ fun IntelliGuessApp(
                     onClick = {
                         // If the users input is incorrect, it will display a toast
                         if (input.value.lowercase() != entry.key.lowercase()) {
-                            Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
+                            //TODO: Create a dialog instead
+                            //Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
+                            isWrong.value = true
+                            return@Button
                         }
                         count.intValue += 1  // Increment a 1 into count
                         // Remove the entry from the selectedSubj
@@ -359,10 +371,11 @@ fun IntelliGuessApp(
             }
         }
     }
+
+
+
     // Add another condition so it will not pop up the alert dialog when the app start
-    if (viewModel.collections.value?.isEmpty() == true) {
-        IsCollectionEmpty(collections = collections, navController = navController)
-    }
+    IsCollectionEmpty(collections = collections, navController = navController)
     // Show a dialog if the size of map is one
     IsOneDict(winStreak = count, isOnePair = isOnePair, navController = navController)
     // Show the hint to the user
@@ -371,6 +384,20 @@ fun IntelliGuessApp(
     UserWin(userWin = userWin)
     // Shows an alert dialog to the user if they want to exit
     ExitConfirmation(navController = navController, showExitDialog = showExitDialog, viewModel = viewModel, oldSubj = oldSubj)
+    // Shows an alert dialog that tells the user the provided input is incorrect
+    IncorrectAnswer(isWrong = isWrong)
+
+    // Shows the confirmation if the user wants to change the subject if oldSubj and foundSubj is not null
+    oldSubj?.let { foundSubj?.let { it1 -> ChangeSubject(changeSubject = changeSubject, isSubjectChange = isSubjectChange, viewModel = viewModel, oldSubj = it, foundSubj = it1) } }
+
+    if (isSubjectChange.value) {
+        // Set the oldSubj to foundSubj
+        oldSubj = foundSubj
+        // Dispose the drop down
+        expand.value = false
+        // Eliminate the infinite loop
+        isSubjectChange.value = false
+    }
 }
 
 

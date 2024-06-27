@@ -101,6 +101,7 @@ fun IntelliGuessCollection(
                 Button(
                     onClick = {
                         expand.value = true
+                        Toast.makeText(loc, "${collections.size}", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -180,6 +181,7 @@ fun IntelliGuessCollection(
                                             }
                                             // Removes the specific subj
                                             viewModel.remove(subj)
+                                            Toast.makeText(loc, "${collections.size}", Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
