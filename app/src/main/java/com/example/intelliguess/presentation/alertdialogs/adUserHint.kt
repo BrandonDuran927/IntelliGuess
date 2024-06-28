@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +47,8 @@ fun UserHint(
                         Image(
                             painter = painterResource(id = R.drawable.bulb),
                             contentDescription = "Hint Icon",
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
+                            colorFilter = ColorFilter.tint(color = Color.White)
                         )
                     }
 
@@ -60,20 +63,23 @@ fun UserHint(
                         if (splitKey?.size!! > 1) {
                             Text(
                                 text = "The answer consists of ${splitKey.size} words",
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
+                                color = Color.Black
                             )
                         // Display only the char length of the word
                         } else {
                             Text(
                                 text = "This word has ${entry.key.length} letters",
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
+                                color = Color.Black
                             )
                         }
 
                     }
                 }
             },
-            confirmButton = { /* Does not do anything */ }
+            confirmButton = { /* Does not do anything */ },
+            containerColor = Color.White
         )
     }
 }

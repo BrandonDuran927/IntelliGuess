@@ -75,7 +75,8 @@ fun ChangeSubject(
                         )
                     }
                 }
-            }
+            },
+            containerColor = Color.White
         )
     }
 }

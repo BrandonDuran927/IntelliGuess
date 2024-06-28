@@ -11,8 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -43,7 +47,7 @@ fun IntelliGuessEditItem(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "${currTitle.value} ${obj.isEditing} ${obj.subject}",
+                        text = "${currTitle.value}",
                         fontSize = 24.sp,
                         color = colorResource(id = R.color.Secondary),
                         fontWeight = FontWeight.ExtraBold
@@ -55,7 +59,15 @@ fun IntelliGuessEditItem(
                         OutlinedTextField(
                             value = editedDesc.value,
                             onValueChange = { editedDesc.value = it },
-                            label = { Text(text = "Edit description") }
+                            label = { Text(text = "Edit description", color = Color.Black) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                cursorColor = Color.Black,
+                                focusedBorderColor = Color.Black
+                            )
                         )
                     }
                 }
@@ -73,7 +85,10 @@ fun IntelliGuessEditItem(
                             colorResource(id = R.color.white).copy(alpha = 0.5F)
                         )
                     ) {
-                        Text(text = "Reset", color = Color.Black.copy(alpha = 0.6F))
+                        Text(
+                            text = "Reset",
+                            color = Color.Black
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
@@ -91,10 +106,14 @@ fun IntelliGuessEditItem(
                             colorResource(id = R.color.Secondary)
                         )
                     ) {
-                        Text(text = "Done")
+                        Text(
+                            text = "Done",
+                            color = Color.White
+                        )
                     }
                 }
-            }
+            },
+            containerColor = Color.White
         )
     }
 }

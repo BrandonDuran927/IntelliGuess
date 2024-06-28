@@ -32,7 +32,8 @@ fun IncorrectAnswer(
                         lineHeight = 32.sp
                     )
                 }
-            }
+            },
+            containerColor = Color.White
         )
     }
 }

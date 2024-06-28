@@ -25,11 +25,13 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -101,7 +103,6 @@ fun IntelliGuessCollection(
                 Button(
                     onClick = {
                         expand.value = true
-                        Toast.makeText(loc, "${collections.size}", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -114,20 +115,24 @@ fun IntelliGuessCollection(
                             Text(
                                 text = it,
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
                             )
                         }
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "DropDown",
+                            tint = Color.White
                         )
                     } else {
                         Text(
                             text = "Add a category",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
-                        Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Arrow")
+                        Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Arrow",
+                            tint = Color.White)
                     }
                 }
                 IconButton(onClick = {
@@ -157,7 +162,9 @@ fun IntelliGuessCollection(
             DropdownMenu(
                 expanded = expand.value,
                 onDismissRequest = { expand.value = false },
-                modifier = Modifier.width(250.dp)
+                modifier = Modifier
+                    .width(250.dp)
+                    .background(Color.White)
             ) {
                 // Display all the subject through dropDownMenuItem composable if collections is not empty
                 if (collections.isNotEmpty()) {
@@ -171,7 +178,8 @@ fun IntelliGuessCollection(
                                         text = subj.subject,
                                         textAlign = TextAlign.Start,
                                         fontSize = 16.sp,
-                                        modifier = Modifier.width(100.dp)
+                                        modifier = Modifier.width(100.dp),
+                                        color = Color.Black
                                     )
                                     Spacer(modifier = Modifier.width(100.dp))
                                     IconButton(
@@ -181,13 +189,13 @@ fun IntelliGuessCollection(
                                             }
                                             // Removes the specific subj
                                             viewModel.remove(subj)
-                                            Toast.makeText(loc, "${collections.size}", Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Clear,
-                                            contentDescription = "Remove Object From List"
+                                            contentDescription = "Remove Object From List",
+                                            tint = Color.Black
                                         )
                                     }
                                 }
@@ -251,14 +259,14 @@ fun IntelliGuessCollection(
                     },
                     modifier = Modifier
                         .padding(40.dp)
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.BottomEnd),
+                    containerColor = colorResource(id = R.color.Secondary),
+                    contentColor = colorResource(id = R.color.Secondary)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Item",
-                        tint = colorResource(
-                            id = R.color.Secondary
-                        )
+                        tint = Color.White
                     )
                 }
             }

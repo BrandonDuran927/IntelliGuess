@@ -42,14 +42,16 @@ fun IsOneDict(
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "One question left",
-                            fontSize = 24.sp
+                            fontSize = 24.sp,
+                            color = colorResource(id = R.color.Secondary)
                         )
                     // The user has one dictionary only
                     } else {
                         Text(
                             text = "You only have one dictionary, add more to skip",
                             textAlign = TextAlign.Center,
-                            fontSize = 24.sp
+                            fontSize = 24.sp,
+                            color = colorResource(id = R.color.Secondary)
                         )
                     }
                 }
@@ -80,7 +82,7 @@ fun IsOneDict(
                                 colorResource(id = R.color.Secondary)
                             )
                         ) {
-                            Text(text = "Continue")
+                            Text(text = "Continue", color = Color.White)
                         }
                     // The user has one dictionary only
                     } else {
@@ -103,11 +105,12 @@ fun IsOneDict(
                                 colorResource(id = R.color.Secondary)
                             )
                         ) {
-                            Text(text = "Add More")
+                            Text(text = "Add More", color = Color.White)
                         }
                     }
                 }
-            }
+            },
+            containerColor = Color.White
         )
     }
 }

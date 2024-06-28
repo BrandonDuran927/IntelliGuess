@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -159,7 +160,7 @@ fun IntelliGuessApp(
                     DropdownMenu(
                         expanded = expand.value,
                         onDismissRequest = { expand.value = false },
-                        modifier = Modifier.width(200.dp)
+                        modifier = Modifier.width(200.dp).background(Color.White)
                     ) {
                         viewModel.collections.value?.forEach { subj ->
                             DropdownMenuItem(
@@ -240,7 +241,7 @@ fun IntelliGuessApp(
                             containerColor = colorResource(id = R.color.Secondary)
                         )
                     ) {
-                        Text(text = "Add Dictionary")
+                        Text(text = "Add Dictionary", color = Color.White)
                     }
                 }
             }
@@ -314,7 +315,11 @@ fun IntelliGuessApp(
                         }
                     }
                 ) {
-                    Text(text = "Submit", fontSize = 16.sp)
+                    Text(
+                        text = "Submit",
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
                 }
             } else {
                 Spacer(modifier = Modifier.height(48.dp))
@@ -336,7 +341,9 @@ fun IntelliGuessApp(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.White
+                    unfocusedIndicatorColor = Color.White,
+                    focusedIndicatorColor = Color.White,
+                    cursorColor = Color.White
                 ),
                 textStyle = TextStyle(
                     fontSize = 24.sp,

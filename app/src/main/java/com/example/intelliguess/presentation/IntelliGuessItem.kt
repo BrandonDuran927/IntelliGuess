@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,9 +43,13 @@ fun IntelliGuessItem(
                 Text(
                     text = key,
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.Black
                 )
-                Text(text = value)
+                Text(
+                    text = value,
+                    color = Color.Black
+                )
             }
             IconButton(
                 onClick = { onEdit(key, value) }  // Pass the key and value as argument to onEdit()
@@ -52,6 +57,7 @@ fun IntelliGuessItem(
                 Icon(
                     imageVector = Icons.Rounded.Edit,
                     contentDescription = "Edit Subject",
+                    tint = Color.Black
                 )
             }
             IconButton(
@@ -60,6 +66,7 @@ fun IntelliGuessItem(
                 Icon(
                     imageVector = Icons.Rounded.Delete,
                     contentDescription = "Delete Subject",
+                    tint = Color.Black
                 )
             }
         }
