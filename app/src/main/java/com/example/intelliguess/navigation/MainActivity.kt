@@ -61,7 +61,6 @@ import com.example.intelliguess.ui.theme.IntelliGuessTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: IntelliGuessViewModel
-    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
