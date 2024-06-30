@@ -187,6 +187,7 @@ class IntelliGuessViewModel(
     // Reset the map to _oldSubj
     fun resetMap(subj: SubjCollectionEnt) {
         viewModelScope.launch {
+            delay(1000L)
             dao.upsertSubjCollection(subj) // Assuming subj has the original mapPair
             _collections.value = dao.getAllSubjCollections()
             _selectedSubj.value = subj
