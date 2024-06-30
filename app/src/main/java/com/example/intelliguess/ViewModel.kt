@@ -33,9 +33,9 @@ class IntelliGuessViewModel(
     // Initializer of this class
     init {
         viewModelScope.launch {
+            delay(1000L)
             // Ensures the LiveData _collections contains the latest data
             _collections.value = dao.getAllSubjCollections()
-
             // Ensuring the UI reflects the latest state
             if(_collections.value!!.isNotEmpty()) {
                 _selectedSubj.value = _collections.value?.first()
