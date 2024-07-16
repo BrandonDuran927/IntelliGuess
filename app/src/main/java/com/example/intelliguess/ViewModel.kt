@@ -7,13 +7,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.intelliguess.data.SubjCollectionEnt
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class IntelliGuessViewModel(
-    private val dao: SubjCollectionDao
+@HiltViewModel
+class IntelliGuessViewModel @Inject constructor(
+    private val db: SubjCollectionDatabase
 ) : ViewModel() {
+    private val dao = db.dao
+
     var isInHomeScreen = MutableLiveData<Boolean>()
 
     // Responsible for updating the collections continuously using the LiveData

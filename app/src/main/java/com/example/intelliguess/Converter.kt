@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken
 
 
 class Converter {
-
     //Convert the map to a string using @TypeConverter annotation
     @TypeConverter
     fun fromMutableMap(value: MutableMap<String, String>?): String? {

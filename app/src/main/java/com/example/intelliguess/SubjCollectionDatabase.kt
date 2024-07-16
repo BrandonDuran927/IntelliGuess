@@ -16,20 +16,4 @@ import com.example.intelliguess.data.SubjCollectionEnt
 @TypeConverters(Converter::class)
 abstract class SubjCollectionDatabase : RoomDatabase() {
     abstract val dao: SubjCollectionDao
-    companion object {
-        @Volatile
-        private var INSTANCE: SubjCollectionDatabase? = null
-
-        fun getDatabase(context: Context): SubjCollectionDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    SubjCollectionDatabase::class.java,
-                    "subj_collection_database"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 }

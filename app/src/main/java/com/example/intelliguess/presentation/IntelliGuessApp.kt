@@ -160,7 +160,9 @@ fun IntelliGuessApp(
                     DropdownMenu(
                         expanded = expand.value,
                         onDismissRequest = { expand.value = false },
-                        modifier = Modifier.width(200.dp).background(Color.White)
+                        modifier = Modifier
+                            .width(200.dp)
+                            .background(Color.White)
                     ) {
                         viewModel.collections.value?.forEach { subj ->
                             DropdownMenuItem(
