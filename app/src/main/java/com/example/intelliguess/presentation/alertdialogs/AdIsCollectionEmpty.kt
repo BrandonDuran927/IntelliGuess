@@ -55,7 +55,9 @@ fun IsCollectionEmpty(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.height(34.dp))
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        color = colorResource(R.color.Secondary)
+                    )
                     Spacer(Modifier.height(34.dp))
                 }
             }
