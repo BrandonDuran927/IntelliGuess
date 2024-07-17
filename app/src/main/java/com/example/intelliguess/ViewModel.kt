@@ -34,9 +34,12 @@ class IntelliGuessViewModel @Inject constructor(
     // Stores the previous selected subject
     private val _oldSubj = MutableLiveData<SubjCollectionEnt>()
 
+    var count = MutableLiveData(0)
+        private set
 
     // Initializer of this class
     init {
+        count.value = 3
         viewModelScope.launch {
             delay(1000L)
             // Ensures the LiveData _collections contains the latest data
@@ -238,6 +241,20 @@ class IntelliGuessViewModel @Inject constructor(
             _selectedSubj.value = subj
             _collections.value = dao.getAllSubjCollections()
         }
+    }
+
+    fun countDown() {
+        viewModelScope.launch {
+            while (count.value!! > 0) {
+                delay(1000)
+                count.value = count.value!! - 1
+                Log.d("Timer", "${count.value}")
+            }
+        }
+    }
+
+    fun resetTimer() {
+        count.value = 5 // Reset countdown to 5 seconds
     }
 }
 

@@ -18,14 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -41,19 +40,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
 import com.example.intelliguess.data.SubjCollectionEnt
@@ -117,7 +112,6 @@ fun IntelliGuessApp(
             )
         }
     }
-    val loc = LocalContext.current  // store the current context
     // Intercept the back button press to show the exit confirmation dialog
     BackHandler {
         showExitDialog.value = true
@@ -194,7 +188,7 @@ fun IntelliGuessApp(
                     }) {
                         Text(text = "Collections", color = Color.White, fontSize = 18.sp)
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "Collections",
                             tint = Color.White
                         )
@@ -288,8 +282,6 @@ fun IntelliGuessApp(
                     onClick = {
                         // If the users input is incorrect, it will display a toast
                         if (input.value.lowercase() != entry.key.lowercase()) {
-                            //TODO: Create a dialog instead
-                            //Toast.makeText(loc, "Incorrect", Toast.LENGTH_SHORT).show()
                             isWrong.value = true
                             return@Button
                         }
@@ -384,7 +376,7 @@ fun IntelliGuessApp(
 
 
     // Add another condition so it will not pop up the alert dialog when the app start
-    IsCollectionEmpty(collections = collections, navController = navController)
+    IsCollectionEmpty(collections = collections, navController = navController, viewModel = viewModel)
     // Show a dialog if the size of map is one
     IsOneDict(winStreak = count, isOnePair = isOnePair, navController = navController)
     // Show the hint to the user

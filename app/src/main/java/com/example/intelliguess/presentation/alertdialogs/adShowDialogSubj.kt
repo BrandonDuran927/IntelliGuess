@@ -60,6 +60,7 @@ fun ShowDialogSubj(
                         viewModel.add(addedSubj.value.uppercase())
                         showDialogSubj.value = false
                         addedSubj.value = ""
+                        viewModel.resetTimer()
                     }
                 },
                     colors = ButtonDefaults.buttonColors(

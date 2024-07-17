@@ -32,7 +32,7 @@ fun ChangeSubject(
     if (changeSubject.value) {
         AlertDialog(
             onDismissRequest = { changeSubject.value = false }, // Dispose this dialog
-            confirmButton = {
+            text = {
                 Text(
                     color = colorResource(id = R.color.Secondary),
                     text = "Changing the subject will reset the win streak",
@@ -40,6 +40,8 @@ fun ChangeSubject(
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
+            },
+            confirmButton = {
                 Row (
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End

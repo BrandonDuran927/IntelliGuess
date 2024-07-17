@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.ui.theme.IntelliGuessTheme
@@ -26,11 +27,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val vm = hiltViewModel<IntelliGuessViewModel>()
                     // Create an instance of NavController
                     val navController = rememberNavController()
                     SetupNavGraph(
                         navController = navController,
-                        viewModel
+                        vm
                     )
                 }
             }
