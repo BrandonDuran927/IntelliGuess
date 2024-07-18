@@ -58,6 +58,7 @@ import com.example.intelliguess.presentation.alertdialogs.ExitConfirmation
 import com.example.intelliguess.presentation.alertdialogs.IncorrectAnswer
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
 import com.example.intelliguess.presentation.alertdialogs.IsOneDict
+import com.example.intelliguess.presentation.alertdialogs.Loading
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
@@ -90,6 +91,8 @@ fun IntelliGuessApp(
 
     // Used to retrieved the matched object/entity
     var foundSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
+
+    var temp: Int? = 0
 
     // Store a copy of the selected subject when it is first set into oldSubj
     LaunchedEffect(selectedSubj) {
@@ -173,6 +176,8 @@ fun IntelliGuessApp(
                                     }
                                     // Store the founded subject using find
                                     foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                    increment.intValue = 0
+                                    //FIXME
                                 }
                             )
                         }

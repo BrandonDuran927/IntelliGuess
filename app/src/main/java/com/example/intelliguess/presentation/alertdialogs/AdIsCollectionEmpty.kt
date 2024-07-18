@@ -46,22 +46,7 @@ fun IsCollectionEmpty(
 
     // Show CircularProgressIndicator if timer is running and collections are empty
     if (timer > 0 && collections.isEmpty()) {
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(Modifier.height(34.dp))
-                    CircularProgressIndicator(
-                        color = colorResource(R.color.Secondary)
-                    )
-                    Spacer(Modifier.height(34.dp))
-                }
-            }
-        )
+        Loading()
     }
     // Show message to add category if timer has finished and collections are still empty
     else if (collections.isEmpty()) {
