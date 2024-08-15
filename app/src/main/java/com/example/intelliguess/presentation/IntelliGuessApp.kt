@@ -177,7 +177,6 @@ fun IntelliGuessApp(
                                     // Store the founded subject using find
                                     foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
                                     increment.intValue = 0
-                                    //FIXME
                                 }
                             )
                         }
