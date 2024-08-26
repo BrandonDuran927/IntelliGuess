@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -61,6 +62,7 @@ import com.example.intelliguess.R
 import com.example.intelliguess.data.SubjCollectionEnt
 import com.example.intelliguess.navigation.Screen
 import com.example.intelliguess.presentation.alertdialogs.ChangeSubject
+import com.example.intelliguess.presentation.alertdialogs.CollectionPage
 import com.example.intelliguess.presentation.alertdialogs.ExitConfirmation
 import com.example.intelliguess.presentation.alertdialogs.IncorrectAnswer
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
@@ -68,7 +70,6 @@ import com.example.intelliguess.presentation.alertdialogs.IsOneDict
 import com.example.intelliguess.presentation.alertdialogs.RevealAnswer
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
-
 
 
 @Composable
@@ -83,12 +84,17 @@ fun IntelliGuessApp(
     val userWin = remember { mutableStateOf(false) }  // Triggered when the user win
     val showExitDialog = remember { mutableStateOf(false) }  // used in ExitConfirmation
     val changeSubject = remember { mutableStateOf(false) }  // used in changing the subject
-    val isSubjectChange = remember { mutableStateOf(false) }  // used when the user confirm to change the subject
-    val isWrong = remember { mutableStateOf(false) }  // used when whether the answer of the user is correct or not
+    val isInCollection = remember { mutableStateOf(false) }
+
+    val isSubjectChange =
+        remember { mutableStateOf(false) }  // used when the user confirm to change the subject
+    val isWrong =
+        remember { mutableStateOf(false) }  // used when whether the answer of the user is correct or not
 
 
     val input = remember { mutableStateOf("") }  // Store the users input
-    val count = remember { mutableIntStateOf(0) }  // Count the total win to compare with size of map
+    val count =
+        remember { mutableIntStateOf(0) }  // Count the total win to compare with size of map
 
     // Observe the collections in viewModel
     val collections by viewModel.collections.observeAsState(initial = emptyList())
@@ -99,7 +105,6 @@ fun IntelliGuessApp(
 
     // Used to retrieved the matched object/entity
     var foundSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
-
 
     // Store a copy of the selected subject when it is first set into oldSubj
     LaunchedEffect(selectedSubj) {
@@ -135,7 +140,7 @@ fun IntelliGuessApp(
             .fillMaxSize()
             .background(color = colorResource(id = R.color.Primary))
             .pointerInput(Unit) {
-                detectTapGestures(onTap ={
+                detectTapGestures(onTap = {
                     focusManager.clearFocus()
                 })
             },
@@ -190,7 +195,8 @@ fun IntelliGuessApp(
                                         changeSubject.value = true
                                     }
                                     // Store the founded subject using find
-                                    foundSubj = viewModel.collections.value?.find { it.subject == subj.subject }!!
+                                    foundSubj =
+                                        viewModel.collections.value?.find { it.subject == subj.subject }!!
                                     increment.intValue = 0
                                 }
                             )
@@ -198,12 +204,7 @@ fun IntelliGuessApp(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     TextButton(onClick = {
-                        // Navigate through the item composable screen
-                        navController.navigate(route = Screen.Item.route)
-                        if (oldSubj != null) {
-                            // Retrieve the map odl value if oldSubj is not null
-                            viewModel.resetMap(oldSubj!!)
-                        }
+                        isInCollection.value = true
                     }) {
                         Text(text = "Collections", color = Color.White, fontSize = 18.sp)
                         Icon(
@@ -262,52 +263,61 @@ fun IntelliGuessApp(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Row (
-            modifier = Modifier.fillMaxWidth(), //FIXME: Auto adjust the elements when device phone font increase
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (entry != null) {
-                TextButton(
-                    onClick = {
-                        hint.value = true
-                    }
-                ) {
-                    Text(
-                        text = "Hint",
-                        color = colorResource(id = R.color.Secondary),
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                TextButton(
-                    onClick = {
-                        // Set the isOnePair to true if the size of map is equivalent to 1
-                        if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
-                            isOnePair.value = true
-                        } else { // Change the value of increment
-                            increment.intValue = (increment.intValue.plus(1)) % selectedSubj?.mapPair?.size!!
+            Row(
+                modifier = Modifier.fillMaxWidth(),  // FIXME: Auto adjust the elements when device phone font increase
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (entry == null) {
+                    Spacer(modifier = Modifier.height(48.dp))
+                } else {
+                    TextButton(
+                        onClick = {
+                            hint.value = true
                         }
+                    ) {
+                        Text(
+                            text = "Hint",
+                            color = colorResource(id = R.color.Secondary),
+                            fontSize = 16.sp
+                        )
                     }
-                ) {
-                    Text(
-                        text = "Skip",
-                        color = colorResource(id = R.color.Secondary),
-                        fontSize = 16.sp
-                    )
-                }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    TextButton(
+                        onClick = {
+                            // Set the isOnePair to true if the size of map is equivalent to 1
+                            if (viewModel.selectedSubj.value?.mapPair?.size == 1) {
+                                isOnePair.value = true
+                            } else { // Change the value of increment
+                                increment.intValue =
+                                    (increment.intValue.plus(1)) % selectedSubj?.mapPair?.size!!
+                            }
+                        }
+                    ) {
+                        Text(
+                            text = "Skip",
+                            color = colorResource(id = R.color.Secondary),
+                            fontSize = 16.sp
+                        )
+                    }
 
-                TextButton(
-                    onClick = {
-                        isAnswerReveal.value = true
+                    TextButton(
+                        onClick = {
+                            isAnswerReveal.value = true
+                        }
+                    ) {
+                        Text(
+                            text = "Reveal",
+                            color = colorResource(id = R.color.Secondary),
+                            fontSize = 16.sp
+                        )
                     }
-                ) {
-                    Text(
-                        text = "Reveal",
-                        color = colorResource(id = R.color.Secondary),
-                        fontSize = 16.sp
-                    )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+            }
+            if (entry != null) {
                 Button(
                     modifier = Modifier.width(100.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -319,6 +329,7 @@ fun IntelliGuessApp(
                             isWrong.value = true
                             return@Button
                         }
+                        focusManager.clearFocus()
                         count.intValue += 1  // Increment a 1 into count
                         input.value = ""  // Reset the user's input
                         // Remove the entry from the selectedSubj
@@ -333,7 +344,7 @@ fun IntelliGuessApp(
                             viewModel.resetMap(oldSubj!!)
                             count.intValue = 0
                             increment.intValue = viewModel.getItemRandomly() ?: 0
-                        // Set the increment value to zero once the increment is equal to map or the size of map is one
+                            // Set the increment value to zero once the increment is equal to map or the size of map is one
                         } else if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
                                 1
                             ) || viewModel.selectedSubj.value?.mapPair?.size == 1
@@ -348,8 +359,6 @@ fun IntelliGuessApp(
                         color = Color.White
                     )
                 }
-            } else {
-                Spacer(modifier = Modifier.height(48.dp))
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -407,7 +416,11 @@ fun IntelliGuessApp(
     }
 
     // Add another condition so it will not pop up the alert dialog when the app start
-    IsCollectionEmpty(collections = collections, navController = navController, viewModel = viewModel)
+    IsCollectionEmpty(
+        collections = collections,
+        navController = navController,
+        viewModel = viewModel
+    )
     // Show a dialog if the size of map is one
     IsOneDict(winStreak = count, isOnePair = isOnePair, navController = navController)
     // Show the hint to the user
@@ -415,15 +428,33 @@ fun IntelliGuessApp(
     // Congratulates the user using alert dialog
     UserWin(userWin = userWin)
     // Shows an alert dialog to the user if they want to exit
-    ExitConfirmation(navController = navController, showExitDialog = showExitDialog, viewModel = viewModel, oldSubj = oldSubj)
+    ExitConfirmation(
+        navController = navController,
+        showExitDialog = showExitDialog,
+        viewModel = viewModel,
+        oldSubj = oldSubj
+    )
     // Shows an alert dialog that tells the user the provided input is incorrect
     IncorrectAnswer(isWrong = isWrong)
     // Reveals the answer
     RevealAnswer(isRevealAnswer = isAnswerReveal, answer = entry?.key.toString())
 
+    CollectionPage(
+        viewModel = viewModel,
+        navController = navController,
+        isInCollection = isInCollection,
+        oldSubj = oldSubj
+    )
+
     // Shows the confirmation if the user wants to change the subject if oldSubj and foundSubj is not null
     if (oldSubj != null && foundSubj != null) {
-        ChangeSubject(changeSubject = changeSubject, isSubjectChange = isSubjectChange, viewModel = viewModel, oldSubj = oldSubj!!, foundSubj = foundSubj!!)
+        ChangeSubject(
+            changeSubject = changeSubject,
+            isSubjectChange = isSubjectChange,
+            viewModel = viewModel,
+            oldSubj = oldSubj!!,
+            foundSubj = foundSubj!!
+        )
     }
 
     if (isSubjectChange.value) {

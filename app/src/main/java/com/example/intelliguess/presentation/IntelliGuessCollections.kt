@@ -28,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -194,8 +195,6 @@ fun IntelliGuessCollection(
                                             if (viewModel.collections.value?.size == 1) {
                                                 expand.value = false
                                             }
-                                            // Removes the specific subj
-//                                            viewModel.remove(subj) // todo
                                             subjToDelete.value = subj
                                             isDeleteSubject.value = true
                                         },
@@ -262,12 +261,12 @@ fun IntelliGuessCollection(
 
             // Shows a plus icon if collections is not empty using FAB
             if (viewModel.collections.value?.isNotEmpty() == true) {
-                FloatingActionButton(
+                ExtendedFloatingActionButton(
                     onClick = {
                         showDialogItem.value = true
                     },
                     modifier = Modifier
-                        .padding(40.dp)
+                        .padding(20.dp)
                         .align(Alignment.BottomEnd),
                     containerColor = colorResource(id = R.color.Secondary),
                     contentColor = colorResource(id = R.color.Secondary)
@@ -277,14 +276,14 @@ fun IntelliGuessCollection(
                         contentDescription = "Add Item",
                         tint = Color.White
                     )
+                    Spacer(Modifier.width(8.dp))
+                    Text(text = "Add", color = Color.White, fontSize = 20.sp)
                 }
             }
-            Row(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .align(Alignment.BottomStart)
+                    .padding(start = 40.dp, bottom = 10.dp)
             ) {
                 Text(
                     text = "© 2024 Brandon Duran",

@@ -1,5 +1,6 @@
 package com.example.intelliguess.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -35,11 +37,12 @@ fun IntelliGuessItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.Top
         ) {
             Column(
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .padding(top = 10.dp,end = 8.dp)
                     .width(200.dp)
             ) {
                 Text(
@@ -54,7 +57,7 @@ fun IntelliGuessItem(
                 )
             }
             IconButton(
-                onClick = { onEdit(key, value) }  // Pass the key and value as argument to onEdit()
+                onClick = { onEdit(key, value) }, // Pass the key and value as argument to onEdit()
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Edit,
