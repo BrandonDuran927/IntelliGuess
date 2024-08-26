@@ -43,7 +43,8 @@ fun IsOneDict(
                             modifier = Modifier.fillMaxWidth(),
                             text = "One question left",
                             fontSize = 24.sp,
-                            color = colorResource(id = R.color.Secondary)
+                            color = colorResource(id = R.color.Secondary),
+                            textAlign = TextAlign.Center
                         )
                     // The user has one dictionary only
                     } else {

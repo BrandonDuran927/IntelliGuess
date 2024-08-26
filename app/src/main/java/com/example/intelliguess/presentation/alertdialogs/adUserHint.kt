@@ -29,6 +29,8 @@ fun UserHint(
     hint: MutableState<Boolean>,
     entry: MutableMap.MutableEntry<String, String>?
 ) {
+    val letterText = if (entry?.key?.length == 1) "letter" else "letters"
+
     if (hint.value) {
         AlertDialog(
             onDismissRequest = { hint.value = false }, // Dispose the dialog
@@ -69,12 +71,11 @@ fun UserHint(
                         // Display only the char length of the word
                         } else {
                             Text(
-                                text = "This word has ${entry.key.length} letters",
+                                text = "This word has $letterText letters",
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )
                         }
-
                     }
                 }
             },

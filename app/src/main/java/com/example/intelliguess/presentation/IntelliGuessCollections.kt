@@ -35,12 +35,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -54,7 +57,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.intelliguess.IntelliGuessViewModel
 import com.example.intelliguess.R
+import com.example.intelliguess.data.SubjCollectionEnt
 import com.example.intelliguess.navigation.Screen
+import com.example.intelliguess.presentation.alertdialogs.AdDeleteSubject
 import com.example.intelliguess.presentation.alertdialogs.IntelliGuessEditItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogItem
 import com.example.intelliguess.presentation.alertdialogs.ShowDialogSubj
@@ -70,6 +75,7 @@ fun IntelliGuessCollection(
     val showDialogSubj = remember { mutableStateOf(false) }  // Triggered when the user wants to add a subject
     val showDialogItem = remember { mutableStateOf(false) }  // Triggered when the user wants to add a dictionary
     val isEditing = remember { mutableStateOf(false) }  // Enables the user to edit the dictionary
+    val isDeleteSubject = remember { mutableStateOf(false) }
 
     val addedSubj = remember { mutableStateOf("") }  // Text of the specific subject
     val title = remember { mutableStateOf("") }  // Title of dictionary
@@ -84,6 +90,7 @@ fun IntelliGuessCollection(
     // Observe the current selected subject
     val selectedSubj by viewModel.selectedSubj.observeAsState()
 
+    val subjToDelete = remember { mutableStateOf(selectedSubj) }
 
     Column(
         modifier = Modifier
@@ -188,7 +195,9 @@ fun IntelliGuessCollection(
                                                 expand.value = false
                                             }
                                             // Removes the specific subj
-                                            viewModel.remove(subj)
+//                                            viewModel.remove(subj) // todo
+                                            subjToDelete.value = subj
+                                            isDeleteSubject.value = true
                                         },
                                         modifier = Modifier.size(25.dp)
                                     ) {
@@ -288,6 +297,7 @@ fun IntelliGuessCollection(
     }
     // Responsible for showing the process of adding a subject if showDialogSubj is true
     ShowDialogSubj(showDialogSubj = showDialogSubj, addedSubj = addedSubj, viewModel = viewModel)
+    AdDeleteSubject(isDeleteSubject = isDeleteSubject, viewModel = viewModel, subjToDelete = subjToDelete)
     // If selectedSubj is not null, it will show the process of adding a dictionary
     selectedSubj?.let {
         ShowDialogItem(

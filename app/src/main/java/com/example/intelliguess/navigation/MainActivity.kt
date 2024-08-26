@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// FIXME: When the phone is not in onStop mode, it will not reset the map itself
+
 
 
 

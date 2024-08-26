@@ -1,9 +1,9 @@
 package com.example.intelliguess.presentation
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -39,12 +40,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +65,7 @@ import com.example.intelliguess.presentation.alertdialogs.ExitConfirmation
 import com.example.intelliguess.presentation.alertdialogs.IncorrectAnswer
 import com.example.intelliguess.presentation.alertdialogs.IsCollectionEmpty
 import com.example.intelliguess.presentation.alertdialogs.IsOneDict
-import com.example.intelliguess.presentation.alertdialogs.Loading
+import com.example.intelliguess.presentation.alertdialogs.RevealAnswer
 import com.example.intelliguess.presentation.alertdialogs.UserHint
 import com.example.intelliguess.presentation.alertdialogs.UserWin
 
@@ -71,6 +78,7 @@ fun IntelliGuessApp(
 ) {
     val expand = remember { mutableStateOf(false) }  // Expanding the dropdown of list of subjects
     val hint = remember { mutableStateOf(false) }  // Triggered a hint for the user
+    val isAnswerReveal = remember { mutableStateOf(false) }  // Reveal the answer to the user
     val isOnePair = remember { mutableStateOf(false) }  // Set to true based on the size of the map
     val userWin = remember { mutableStateOf(false) }  // Triggered when the user win
     val showExitDialog = remember { mutableStateOf(false) }  // used in ExitConfirmation
@@ -92,7 +100,6 @@ fun IntelliGuessApp(
     // Used to retrieved the matched object/entity
     var foundSubj by remember { mutableStateOf<SubjCollectionEnt?>(null) }
 
-    var temp: Int? = 0
 
     // Store a copy of the selected subject when it is first set into oldSubj
     LaunchedEffect(selectedSubj) {
@@ -115,6 +122,9 @@ fun IntelliGuessApp(
             )
         }
     }
+    // Handle the keyboard whether to destroy it or not depending with detectTapGestures
+    val focusManager = LocalFocusManager.current
+
     // Intercept the back button press to show the exit confirmation dialog
     BackHandler {
         showExitDialog.value = true
@@ -123,7 +133,12 @@ fun IntelliGuessApp(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.Primary)),
+            .background(color = colorResource(id = R.color.Primary))
+            .pointerInput(Unit) {
+                detectTapGestures(onTap ={
+                    focusManager.clearFocus()
+                })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -131,7 +146,7 @@ fun IntelliGuessApp(
             contentDescription = "Icon",
             modifier = Modifier.size(165.dp)
         )
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         Box {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -207,7 +222,7 @@ fun IntelliGuessApp(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 50.dp)
-                .heightIn(100.dp, 250.dp),
+                .heightIn(100.dp, 260.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -215,11 +230,11 @@ fun IntelliGuessApp(
             if (selectedSubj?.mapPair?.isNotEmpty() == true && viewModel.collections.value?.isNotEmpty() == true) {
                 Text(
                     text = entry?.value.toString(),
-                    fontSize = 32.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
-                    lineHeight = 36.sp,
-                    textAlign = TextAlign.Center
+                    lineHeight = 32.sp,
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp
                 )
             } else {
                 Column(
@@ -247,7 +262,10 @@ fun IntelliGuessApp(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Row {
+        Row (
+            modifier = Modifier.fillMaxWidth(), //FIXME: Auto adjust the elements when device phone font increase
+            horizontalArrangement = Arrangement.Center
+        ) {
             if (entry != null) {
                 TextButton(
                     onClick = {
@@ -277,6 +295,18 @@ fun IntelliGuessApp(
                         fontSize = 16.sp
                     )
                 }
+
+                TextButton(
+                    onClick = {
+                        isAnswerReveal.value = true
+                    }
+                ) {
+                    Text(
+                        text = "Reveal",
+                        color = colorResource(id = R.color.Secondary),
+                        fontSize = 16.sp
+                    )
+                }
                 Spacer(modifier = Modifier.width(10.dp))
                 Button(
                     modifier = Modifier.width(100.dp),
@@ -285,11 +315,12 @@ fun IntelliGuessApp(
                     ),
                     onClick = {
                         // If the users input is incorrect, it will display a toast
-                        if (input.value.lowercase() != entry.key.lowercase()) {
+                        if (input.value.lowercase().trim() != entry.key.lowercase()) {
                             isWrong.value = true
                             return@Button
                         }
                         count.intValue += 1  // Increment a 1 into count
+                        input.value = ""  // Reset the user's input
                         // Remove the entry from the selectedSubj
                         viewModel.modifyMap(
                             selectedSubj!!,
@@ -302,14 +333,12 @@ fun IntelliGuessApp(
                             viewModel.resetMap(oldSubj!!)
                             count.intValue = 0
                             increment.intValue = viewModel.getItemRandomly() ?: 0
-                        } else {
-                            // Set the increment value to zero once the increment is equal to map or the size of map is one
-                            if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
-                                    1
-                                ) || viewModel.selectedSubj.value?.mapPair?.size == 1
-                            ) {
-                                increment.intValue = 0
-                            }
+                        // Set the increment value to zero once the increment is equal to map or the size of map is one
+                        } else if (increment.intValue == viewModel.selectedSubj.value?.mapPair?.size?.minus(
+                                1
+                            ) || viewModel.selectedSubj.value?.mapPair?.size == 1
+                        ) {
+                            increment.intValue = 0
                         }
                     }
                 ) {
@@ -377,8 +406,6 @@ fun IntelliGuessApp(
         }
     }
 
-
-
     // Add another condition so it will not pop up the alert dialog when the app start
     IsCollectionEmpty(collections = collections, navController = navController, viewModel = viewModel)
     // Show a dialog if the size of map is one
@@ -391,9 +418,13 @@ fun IntelliGuessApp(
     ExitConfirmation(navController = navController, showExitDialog = showExitDialog, viewModel = viewModel, oldSubj = oldSubj)
     // Shows an alert dialog that tells the user the provided input is incorrect
     IncorrectAnswer(isWrong = isWrong)
+    // Reveals the answer
+    RevealAnswer(isRevealAnswer = isAnswerReveal, answer = entry?.key.toString())
 
     // Shows the confirmation if the user wants to change the subject if oldSubj and foundSubj is not null
-    oldSubj?.let { foundSubj?.let { it1 -> ChangeSubject(changeSubject = changeSubject, isSubjectChange = isSubjectChange, viewModel = viewModel, oldSubj = it, foundSubj = it1) } }
+    if (oldSubj != null && foundSubj != null) {
+        ChangeSubject(changeSubject = changeSubject, isSubjectChange = isSubjectChange, viewModel = viewModel, oldSubj = oldSubj!!, foundSubj = foundSubj!!)
+    }
 
     if (isSubjectChange.value) {
         // Set the oldSubj to foundSubj
